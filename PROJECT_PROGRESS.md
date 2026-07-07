@@ -34,9 +34,9 @@
 
 ## Phase 5 - Admin View
 
-- [ ] Protect admin endpoints with `ADMIN_TOKEN`.
-- [ ] List registrations.
-- [ ] Show totals and filters by class, year, and status.
+- [x] Protect admin endpoints with `ADMIN_TOKEN`.
+- [x] List registrations.
+- [x] Show totals and filters by class, year, and status.
 
 ## Phase 6 - Draw and Bracket
 

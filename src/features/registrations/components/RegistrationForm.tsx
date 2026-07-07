@@ -31,6 +31,9 @@ const schoolYearOptions = [
   '7º ano',
   '8º ano',
   '9º ano',
+  '1º ano do ensino médio',
+  '2º ano do ensino médio',
+  '3º ano do ensino médio',
 ];
 
 const platformOptions = [

@@ -17,3 +17,6 @@ O projeto será desenvolvido com Next.js, usando Material UI para a interface, R
 
 ## 6. Escopo inicial
 O foco inicial é o fluxo completo de inscrição, encerramento e sorteio, sem funcionalidades extras.
+
+## 7. Acesso administrativo inicial
+O painel administrativo inicial será protegido por `ADMIN_TOKEN`, enviado como Bearer token para endpoints em `/api/admin/*`. A interface `/admin` mantém o token somente no navegador para simplificar a operação sem criar um sistema de login completo nesta fase.
