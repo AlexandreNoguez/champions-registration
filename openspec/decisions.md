@@ -32,3 +32,6 @@ O painel administrativo pode gerar 50 inscrições de teste marcadas com `isSeed
 
 ## 11. Distribuição de BYEs no chaveamento
 O chaveamento usa a menor potência de 2 que comporta os inscritos de cada jogo. Quando há BYEs, eles são distribuídos pelas posições da chave para evitar concentração em um único lado e reduzir avanços sem confronto até fases finais.
+
+## 12. Abas do painel administrativo por domínio
+O painel administrativo separa a lista geral de inscritos e cada chaveamento de jogo em abas. A aba de inscritos concentra consulta e filtros, enquanto cada jogo exibe apenas o bracket correspondente.

@@ -22,13 +22,17 @@ import type { DrawMatch, DrawSlot, GameDraw, WinnerSlot } from '@/features/draws
 import type { TournamentGame } from '@/features/registrations/domain';
 
 type AdminDrawViewProps = {
+  selectedGame?: TournamentGame;
   token: string;
 };
 
-export function AdminDrawView({ token }: AdminDrawViewProps) {
+export function AdminDrawView({ selectedGame, token }: AdminDrawViewProps) {
   const { advanceWinner, generateDraw, loadDraw, state } = useAdminDraw(token);
   const testSeeds = useAdminTestSeeds(token);
   const draw = state.data;
+  const displayedGames = selectedGame
+    ? draw?.games.filter((gameDraw) => gameDraw.game === selectedGame)
+    : draw?.games;
 
   return (
     <Paper elevation={2} sx={{ borderRadius: 2, p: { xs: 2.5, sm: 3 } }}>
@@ -36,10 +40,12 @@ export function AdminDrawView({ token }: AdminDrawViewProps) {
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
           <Box sx={{ flex: 1 }}>
             <Typography component="h2" variant="h5">
-              Chaveamento mata-mata
+              {selectedGame ? `Chaveamento ${selectedGame}` : 'Chaveamento mata-mata'}
             </Typography>
             <Typography color="text.secondary" variant="body2">
-              Bracket profissional separado por jogo, com final ao centro e fases nas laterais.
+              {selectedGame
+                ? 'Acompanhe a chave deste jogo e avance vencedores clicando nos competidores.'
+                : 'Bracket profissional separado por jogo, com final ao centro e fases nas laterais.'}
             </Typography>
           </Box>
           <Button
@@ -122,7 +128,7 @@ export function AdminDrawView({ token }: AdminDrawViewProps) {
               <Chip label={`Gerado em ${formatDateTime(draw.generatedAt)}`} />
             </Stack>
 
-            {draw.games.map((gameDraw) => (
+            {displayedGames?.map((gameDraw) => (
               <GameBracket key={gameDraw.game} gameDraw={gameDraw} onAdvanceWinner={advanceWinner} />
             ))}
           </Stack>

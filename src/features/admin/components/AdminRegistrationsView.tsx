@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, type SyntheticEvent } from 'react';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -21,6 +22,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material';
@@ -33,7 +36,7 @@ import type {
 } from '@/features/admin/services/listAdminRegistrations';
 import { useAdminRegistrations } from '@/features/admin/hooks/useAdminRegistrations';
 import { AdminDrawView } from '@/features/admin/components/AdminDrawView';
-import type { RegistrationStatus } from '@/features/registrations/domain';
+import { tournamentGameValues, type RegistrationStatus, type TournamentGame } from '@/features/registrations/domain';
 
 const statusLabels: Record<RegistrationStatus, string> = {
   approved: 'Aprovada',
@@ -47,8 +50,11 @@ const statusColors: Record<RegistrationStatus, 'default' | 'success' | 'warning'
   rejected: 'error',
 };
 
+type AdminTabValue = 'registrations' | TournamentGame;
+
 export function AdminRegistrationsView() {
   const layout = useResponsiveLayout();
+  const [activeTab, setActiveTab] = useState<AdminTabValue>('registrations');
   const {
     clearFilters,
     filters,
@@ -63,6 +69,10 @@ export function AdminRegistrationsView() {
 
   function handleFilterChange(name: keyof AdminRegistrationFilters) {
     return (event: SelectChangeEvent) => updateFilter(name, event.target.value);
+  }
+
+  function handleTabChange(_: SyntheticEvent, value: AdminTabValue) {
+    setActiveTab(value);
   }
 
   return (
@@ -137,67 +147,106 @@ export function AdminRegistrationsView() {
 
           {data ? (
             <>
-              <TotalsGrid data={data} />
-              <AdminDrawView token={token} />
+              <AdminTabs activeTab={activeTab} onChange={handleTabChange} />
 
-              <Paper elevation={2} sx={{ borderRadius: 2, p: { xs: 2.5, sm: 3 } }}>
-                <Stack spacing={2}>
-                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                    <FilterSelect
-                      label="Turma"
-                      name="className"
-                      onChange={handleFilterChange('className')}
-                      options={filterOptions?.classNames || []}
-                      value={filters.className || ''}
-                    />
-                    <FilterSelect
-                      label="Ano escolar"
-                      name="schoolYear"
-                      onChange={handleFilterChange('schoolYear')}
-                      options={filterOptions?.schoolYears || []}
-                      value={filters.schoolYear || ''}
-                    />
-                    <FilterSelect
-                      label="Jogo"
-                      name="preferredGame"
-                      onChange={handleFilterChange('preferredGame')}
-                      options={filterOptions?.games || []}
-                      value={filters.preferredGame || ''}
-                    />
-                    <FilterSelect
-                      getLabel={(status) => statusLabels[status as RegistrationStatus] || status}
-                      label="Status"
-                      name="status"
-                      onChange={handleFilterChange('status')}
-                      options={filterOptions?.statuses || []}
-                      value={filters.status || ''}
-                    />
-                    <Button
-                      onClick={clearFilters}
-                      startIcon={<FilterAltOffIcon />}
-                      sx={{ minHeight: 56, minWidth: { xs: '100%', md: 170 } }}
-                      variant="outlined"
-                    >
-                      Limpar
-                    </Button>
-                    <Button
-                      onClick={loadRegistrations}
-                      startIcon={<RefreshIcon />}
-                      sx={{ minHeight: 56, minWidth: { xs: '100%', md: 150 } }}
-                      variant="contained"
-                    >
-                      Filtrar
-                    </Button>
-                  </Stack>
-                </Stack>
-              </Paper>
+              {activeTab === 'registrations' ? (
+                <>
+                  <TotalsGrid data={data} />
 
-              <RegistrationsTable registrations={data.registrations} />
+                  <Paper elevation={2} sx={{ borderRadius: 2, p: { xs: 2.5, sm: 3 } }}>
+                    <Stack spacing={2}>
+                      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                        <FilterSelect
+                          label="Turma"
+                          name="className"
+                          onChange={handleFilterChange('className')}
+                          options={filterOptions?.classNames || []}
+                          value={filters.className || ''}
+                        />
+                        <FilterSelect
+                          label="Ano escolar"
+                          name="schoolYear"
+                          onChange={handleFilterChange('schoolYear')}
+                          options={filterOptions?.schoolYears || []}
+                          value={filters.schoolYear || ''}
+                        />
+                        <FilterSelect
+                          label="Jogo"
+                          name="preferredGame"
+                          onChange={handleFilterChange('preferredGame')}
+                          options={filterOptions?.games || []}
+                          value={filters.preferredGame || ''}
+                        />
+                        <FilterSelect
+                          getLabel={(status) => statusLabels[status as RegistrationStatus] || status}
+                          label="Status"
+                          name="status"
+                          onChange={handleFilterChange('status')}
+                          options={filterOptions?.statuses || []}
+                          value={filters.status || ''}
+                        />
+                        <Button
+                          onClick={clearFilters}
+                          startIcon={<FilterAltOffIcon />}
+                          sx={{ minHeight: 56, minWidth: { xs: '100%', md: 170 } }}
+                          variant="outlined"
+                        >
+                          Limpar
+                        </Button>
+                        <Button
+                          onClick={loadRegistrations}
+                          startIcon={<RefreshIcon />}
+                          sx={{ minHeight: 56, minWidth: { xs: '100%', md: 150 } }}
+                          variant="contained"
+                        >
+                          Filtrar
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  </Paper>
+
+                  <RegistrationsTable registrations={data.registrations} />
+                </>
+              ) : (
+                <AdminDrawView selectedGame={activeTab} token={token} />
+              )}
             </>
           ) : null}
         </Stack>
       </Box>
     </Box>
+  );
+}
+
+type AdminTabsProps = {
+  activeTab: AdminTabValue;
+  onChange: (event: SyntheticEvent, value: AdminTabValue) => void;
+};
+
+function AdminTabs({ activeTab, onChange }: AdminTabsProps) {
+  return (
+    <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+      <Tabs
+        allowScrollButtonsMobile
+        onChange={onChange}
+        scrollButtons="auto"
+        sx={{
+          minHeight: 56,
+          px: { xs: 1, sm: 2 },
+          '& .MuiTab-root': {
+            minHeight: 56,
+            textTransform: 'none',
+          },
+        }}
+        value={activeTab}
+        variant="scrollable"
+      >
+        <Tab label="Inscritos" value="registrations" />
+        {tournamentGameValues.map((game) => (
+          <Tab key={game} label={game} value={game} />
+        ))}
+      </Tabs>
+    </Paper>
   );
 }
 
