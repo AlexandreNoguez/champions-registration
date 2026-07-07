@@ -29,3 +29,6 @@ O sorteio inicial será gerado em formato mata-mata, separado por jogo. O docume
 
 ## 10. Seeds de teste
 O painel administrativo pode gerar 50 inscrições de teste marcadas com `isSeedData`. A limpeza dessas seeds remove apenas inscrições com essa marcação, preservando inscrições reais.
+
+## 11. Distribuição de BYEs no chaveamento
+O chaveamento usa a menor potência de 2 que comporta os inscritos de cada jogo. Quando há BYEs, eles são distribuídos pelas posições da chave para evitar concentração em um único lado e reduzir avanços sem confronto até fases finais.

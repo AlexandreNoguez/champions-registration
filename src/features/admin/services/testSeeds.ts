@@ -4,6 +4,58 @@ import { RegistrationModel } from '@/models/Registration';
 const seedClassName = 'SEED';
 const seedSchoolYear = 'Teste';
 const seedCount = 50;
+const seedNames = [
+  'Maria',
+  'Pedro',
+  'Ana',
+  'Joao',
+  'Julia',
+  'Lucas',
+  'Beatriz',
+  'Gabriel',
+  'Laura',
+  'Matheus',
+  'Sofia',
+  'Rafael',
+  'Isabela',
+  'Gustavo',
+  'Manuela',
+  'Felipe',
+  'Helena',
+  'Arthur',
+  'Clara',
+  'Davi',
+  'Valentina',
+  'Miguel',
+  'Livia',
+  'Henrique',
+  'Alice',
+  'Bernardo',
+  'Mariana',
+  'Enzo',
+  'Luiza',
+  'Vitor',
+  'Camila',
+  'Caio',
+  'Yasmin',
+  'Thiago',
+  'Ester',
+  'Leonardo',
+  'Larissa',
+  'Bruno',
+  'Nicole',
+  'Samuel',
+  'Amanda',
+  'Diego',
+  'Carolina',
+  'Eduardo',
+  'Leticia',
+  'Vinicius',
+  'Bianca',
+  'Murilo',
+  'Fernanda',
+  'Daniel',
+];
 
 export async function createTestSeeds() {
   await RegistrationModel.deleteMany({ isSeedData: true }).exec();
@@ -11,13 +63,14 @@ export async function createTestSeeds() {
   const registrations = Array.from({ length: seedCount }, (_, index) => {
     const preferredGame = tournamentGameValues[index % tournamentGameValues.length];
     const seedNumber = index + 1;
+    const seedName = seedNames[index];
 
     return {
-      fullName: `Seed Teste ${seedNumber.toString().padStart(2, '0')}`,
+      fullName: `${seedName} Seed`,
       callNumber: `S${seedNumber.toString().padStart(2, '0')}`,
       className: seedClassName,
       schoolYear: seedSchoolYear,
-      nickname: `seed-${seedNumber.toString().padStart(2, '0')}`,
+      nickname: `${seedName.toLowerCase()}-seed`,
       preferredGame,
       status: 'pending',
       isSeedData: true,

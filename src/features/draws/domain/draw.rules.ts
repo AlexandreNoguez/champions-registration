@@ -1,6 +1,8 @@
 import type { TournamentGame } from '@/features/registrations/domain';
 import type { DrawMatch, DrawParticipant, GameDraw } from './draw.types';
 
+export type WinnerSlot = 'slotA' | 'slotB';
+
 export function buildSingleEliminationDraw(
   game: TournamentGame,
   participants: DrawParticipant[],
@@ -33,15 +35,7 @@ function buildFirstRoundMatches(
   participants: DrawParticipant[],
   bracketSize: number
 ) {
-  const slots = [
-    ...participants.map((participant) => ({
-      label: getParticipantLabel(participant),
-      participant,
-    })),
-    ...Array.from({ length: bracketSize - participants.length }, () => ({
-      label: 'BYE',
-    })),
-  ];
+  const slots = buildBalancedFirstRoundSlots(participants, bracketSize);
 
   return Array.from({ length: bracketSize / 2 }, (_, index): DrawMatch => {
     const slotA = slots[index * 2];
@@ -58,6 +52,36 @@ function buildFirstRoundMatches(
   });
 }
 
+function buildBalancedFirstRoundSlots(participants: DrawParticipant[], bracketSize: number) {
+  const bracketPositions = buildBracketSeedPositions(bracketSize);
+
+  return bracketPositions.map((position) => {
+    const participant = participants[position - 1];
+
+    if (!participant) {
+      return {
+        label: 'BYE',
+      };
+    }
+
+    return {
+      label: getParticipantLabel(participant),
+      participant,
+    };
+  });
+}
+
+function buildBracketSeedPositions(bracketSize: number): number[] {
+  let positions = [1, 2];
+
+  while (positions.length < bracketSize) {
+    const nextSize = positions.length * 2;
+    positions = positions.flatMap((position) => [position, nextSize + 1 - position]);
+  }
+
+  return positions;
+}
+
 function buildNextRoundMatches(
   game: TournamentGame,
   previousRound: DrawMatch[],
@@ -72,11 +96,11 @@ function buildNextRoundMatches(
       round,
       position: index + 1,
       slotA: {
-        label: `Vencedor ${firstSourceMatch.id}`,
+        label: 'A definir',
         sourceMatchId: firstSourceMatch.id,
       },
       slotB: {
-        label: `Vencedor ${secondSourceMatch.id}`,
+        label: 'A definir',
         sourceMatchId: secondSourceMatch.id,
       },
       hasBye: false,
@@ -139,4 +163,89 @@ function buildMatchId(game: TournamentGame, round: number, position: number) {
 
 function getParticipantLabel(participant: DrawParticipant) {
   return `${participant.nickname} (${participant.fullName})`;
+}
+
+export function advanceWinnerInGameDraw(
+  gameDraw: GameDraw,
+  matchId: string,
+  winnerSlot: WinnerSlot
+): GameDraw {
+  const nextGameDraw = cloneGameDraw(gameDraw);
+  const match = findMatch(nextGameDraw, matchId);
+
+  if (!match) {
+    throw new Error('Match not found');
+  }
+
+  const selectedSlot = match[winnerSlot];
+
+  if (!selectedSlot.participant) {
+    throw new Error('Selected slot does not have a participant');
+  }
+
+  clearDependentResults(nextGameDraw, match.id);
+
+  match.winnerSlot = winnerSlot;
+  match.winner = selectedSlot.participant;
+  propagateWinnerToNextMatch(nextGameDraw, match.id, selectedSlot.participant);
+
+  return nextGameDraw;
+}
+
+function cloneGameDraw(gameDraw: GameDraw) {
+  return JSON.parse(JSON.stringify(gameDraw)) as GameDraw;
+}
+
+function findMatch(gameDraw: GameDraw, matchId: string) {
+  return gameDraw.rounds.flat().find((match) => match.id === matchId);
+}
+
+function clearDependentResults(gameDraw: GameDraw, sourceMatchId: string) {
+  gameDraw.rounds.flat().forEach((match) => {
+    let wasCleared = false;
+
+    if (match.slotA.sourceMatchId === sourceMatchId) {
+      match.slotA = {
+        label: 'A definir',
+        sourceMatchId,
+      };
+      wasCleared = true;
+    }
+
+    if (match.slotB.sourceMatchId === sourceMatchId) {
+      match.slotB = {
+        label: 'A definir',
+        sourceMatchId,
+      };
+      wasCleared = true;
+    }
+
+    if (wasCleared) {
+      delete match.winner;
+      delete match.winnerSlot;
+      clearDependentResults(gameDraw, match.id);
+    }
+  });
+}
+
+function propagateWinnerToNextMatch(
+  gameDraw: GameDraw,
+  sourceMatchId: string,
+  participant: DrawParticipant
+) {
+  const nextMatch = gameDraw.rounds.flat().find((match) =>
+    match.slotA.sourceMatchId === sourceMatchId || match.slotB.sourceMatchId === sourceMatchId
+  );
+
+  if (!nextMatch) {
+    return;
+  }
+
+  const nextSlot = nextMatch.slotA.sourceMatchId === sourceMatchId ? 'slotA' : 'slotB';
+
+  nextMatch[nextSlot] = {
+    label: getParticipantLabel(participant),
+    participant,
+    sourceMatchId,
+  };
 }

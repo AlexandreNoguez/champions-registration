@@ -2,20 +2,16 @@
 
 import { useState } from 'react';
 import type { SerializedDraw } from '@/features/draws/services/draw.service';
+import type { WinnerSlot } from '@/features/draws/domain';
+import type { TournamentGame } from '@/features/registrations/domain';
 
 type AdminDrawState =
-  | {
-      data: SerializedDraw | null;
-      error: null;
-      message: string;
-      status: 'idle' | 'loading' | 'success';
-    }
-  | {
-      data: null;
-      error: string;
-      message: string;
-      status: 'error';
-    };
+  {
+    data: SerializedDraw | null;
+    error: string | null;
+    message: string;
+    status: 'idle' | 'loading' | 'success' | 'error';
+  };
 
 export function useAdminDraw(token: string) {
   const [state, setState] = useState<AdminDrawState>({
@@ -33,14 +29,22 @@ export function useAdminDraw(token: string) {
     await requestDraw('POST');
   }
 
-  async function requestDraw(method: 'GET' | 'POST') {
+  async function advanceWinner(game: TournamentGame, matchId: string, winnerSlot: WinnerSlot) {
+    await requestDraw('PATCH', {
+      game,
+      matchId,
+      winnerSlot,
+    });
+  }
+
+  async function requestDraw(method: 'GET' | 'POST' | 'PATCH', payload?: unknown) {
     if (!token.trim()) {
-      setState({
-        data: null,
+      setState((currentState) => ({
+        data: currentState.data,
         error: 'Informe o token administrativo.',
         message: '',
         status: 'error',
-      });
+      }));
       return;
     }
 
@@ -56,17 +60,19 @@ export function useAdminDraw(token: string) {
         method,
         headers: {
           Authorization: `Bearer ${token.trim()}`,
+          ...(payload ? { 'Content-Type': 'application/json' } : {}),
         },
+        body: payload ? JSON.stringify(payload) : undefined,
       });
       const data = await response.json();
 
       if (!response.ok) {
-        setState({
-          data: null,
+        setState((currentState) => ({
+          data: currentState.data,
           error: data.message || 'Não foi possível consultar o sorteio.',
           message: '',
           status: 'error',
-        });
+        }));
         return;
       }
 
@@ -77,16 +83,17 @@ export function useAdminDraw(token: string) {
         status: 'success',
       });
     } catch {
-      setState({
-        data: null,
+      setState((currentState) => ({
+        data: currentState.data,
         error: 'Não foi possível conectar ao servidor.',
         message: '',
         status: 'error',
-      });
+      }));
     }
   }
 
   return {
+    advanceWinner,
     generateDraw,
     loadDraw,
     state,

@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
   FormControl,
   Grid,
   InputLabel,
@@ -26,6 +25,7 @@ import {
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
+import { useResponsiveLayout } from '@/shared/hooks/useResponsiveLayout';
 import type {
   AdminRegistration,
   AdminRegistrationFilters,
@@ -48,6 +48,7 @@ const statusColors: Record<RegistrationStatus, 'default' | 'success' | 'warning'
 };
 
 export function AdminRegistrationsView() {
+  const layout = useResponsiveLayout();
   const {
     clearFilters,
     filters,
@@ -73,7 +74,14 @@ export function AdminRegistrationsView() {
         py: { xs: 3, sm: 5 },
       }}
     >
-      <Container maxWidth="lg">
+      <Box
+        sx={{
+          mx: 'auto',
+          maxWidth: layout.admin.contentMaxWidth,
+          px: layout.admin.horizontalPadding,
+          width: '100%',
+        }}
+      >
         <Stack spacing={3}>
           <Box>
             <Typography variant="overline" color="primary">
@@ -188,7 +196,7 @@ export function AdminRegistrationsView() {
             </>
           ) : null}
         </Stack>
-      </Container>
+      </Box>
     </Box>
   );
 }

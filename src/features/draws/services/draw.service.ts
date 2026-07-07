@@ -1,8 +1,10 @@
 import { randomBytes } from 'crypto';
 import {
+  advanceWinnerInGameDraw,
   buildSingleEliminationDraw,
   type DrawParticipant,
   type GameDraw,
+  type WinnerSlot,
 } from '@/features/draws/domain';
 import { tournamentGameValues, type TournamentGame } from '@/features/registrations/domain';
 import { DrawModel, type DrawDocument } from '@/models/Draw';
@@ -47,6 +49,31 @@ export async function getCurrentDraw() {
   return draw ? serializeDraw(draw) : null;
 }
 
+export async function advanceDrawWinner(game: TournamentGame, matchId: string, winnerSlot: WinnerSlot) {
+  const draw = await DrawModel.findOne({ key: 'current' }).exec();
+
+  if (!draw) {
+    throw new Error('Draw not found');
+  }
+
+  const targetGameIndex = draw.games.findIndex((gameDraw) => gameDraw.game === game);
+
+  if (targetGameIndex < 0) {
+    throw new Error('Game draw not found');
+  }
+
+  draw.games[targetGameIndex] = advanceWinnerInGameDraw(
+    toPlainGameDraw(draw.games[targetGameIndex]),
+    matchId,
+    winnerSlot
+  );
+  draw.markModified('games');
+
+  await draw.save();
+
+  return serializeDraw(draw);
+}
+
 async function getParticipantsByGame() {
   const registrations = await RegistrationModel.find({
     preferredGame: { $in: tournamentGameValues },
@@ -77,6 +104,10 @@ async function getParticipantsByGame() {
   });
 
   return participantsByGame;
+}
+
+function toPlainGameDraw(gameDraw: GameDraw) {
+  return JSON.parse(JSON.stringify(gameDraw)) as GameDraw;
 }
 
 function serializeDraw(draw: DrawDocument & { _id: unknown }): SerializedDraw {

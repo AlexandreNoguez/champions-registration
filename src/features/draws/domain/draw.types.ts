@@ -22,6 +22,8 @@ export type DrawMatch = {
   slotA: DrawSlot;
   slotB: DrawSlot;
   hasBye: boolean;
+  winner?: DrawParticipant;
+  winnerSlot?: 'slotA' | 'slotB';
 };
 
 export type GameDraw = {

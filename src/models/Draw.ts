@@ -40,6 +40,8 @@ const drawMatchSchema = new Schema(
     slotA: { type: drawSlotSchema, required: true },
     slotB: { type: drawSlotSchema, required: true },
     hasBye: { type: Boolean, required: true },
+    winner: { type: drawParticipantSchema, required: false },
+    winnerSlot: { type: String, enum: ['slotA', 'slotB'], required: false },
   },
   { _id: false }
 );
