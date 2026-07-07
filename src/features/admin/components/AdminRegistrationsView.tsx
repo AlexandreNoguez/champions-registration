@@ -32,6 +32,7 @@ import type {
   AdminRegistrationListResponse,
 } from '@/features/admin/services/listAdminRegistrations';
 import { useAdminRegistrations } from '@/features/admin/hooks/useAdminRegistrations';
+import { AdminDrawView } from '@/features/admin/components/AdminDrawView';
 import type { RegistrationStatus } from '@/features/registrations/domain';
 
 const statusLabels: Record<RegistrationStatus, string> = {
@@ -129,6 +130,7 @@ export function AdminRegistrationsView() {
           {data ? (
             <>
               <TotalsGrid data={data} />
+              <AdminDrawView token={token} />
 
               <Paper elevation={2} sx={{ borderRadius: 2, p: { xs: 2.5, sm: 3 } }}>
                 <Stack spacing={2}>
@@ -146,6 +148,13 @@ export function AdminRegistrationsView() {
                       onChange={handleFilterChange('schoolYear')}
                       options={filterOptions?.schoolYears || []}
                       value={filters.schoolYear || ''}
+                    />
+                    <FilterSelect
+                      label="Jogo"
+                      name="preferredGame"
+                      onChange={handleFilterChange('preferredGame')}
+                      options={filterOptions?.games || []}
+                      value={filters.preferredGame || ''}
                     />
                     <FilterSelect
                       getLabel={(status) => statusLabels[status as RegistrationStatus] || status}
@@ -262,8 +271,6 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
               <TableCell>Chamada</TableCell>
               <TableCell>Gamer</TableCell>
               <TableCell>Jogo</TableCell>
-              <TableCell>Plataforma</TableCell>
-              <TableCell>Contato</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Inscrição</TableCell>
             </TableRow>
@@ -278,21 +285,24 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
                   <TableCell>{registration.callNumber}</TableCell>
                   <TableCell>{registration.nickname}</TableCell>
                   <TableCell>{registration.preferredGame}</TableCell>
-                  <TableCell>{registration.platform}</TableCell>
-                  <TableCell>{registration.responsibleContact}</TableCell>
                   <TableCell>
-                    <Chip
-                      color={statusColors[registration.status]}
-                      label={statusLabels[registration.status]}
-                      size="small"
-                    />
+                    <Stack direction="row" spacing={1}>
+                      <Chip
+                        color={statusColors[registration.status]}
+                        label={statusLabels[registration.status]}
+                        size="small"
+                      />
+                      {registration.isSeedData ? (
+                        <Chip color="info" label="Seed" size="small" />
+                      ) : null}
+                    </Stack>
                   </TableCell>
                   <TableCell>{formatDateTime(registration.createdAt)}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={10}>
+                <TableCell colSpan={8}>
                   <Typography color="text.secondary" sx={{ py: 2 }} textAlign="center">
                     Nenhuma inscrição encontrada.
                   </Typography>

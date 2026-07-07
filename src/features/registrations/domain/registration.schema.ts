@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { registrationStatusValues } from './registration.types';
+import { registrationStatusValues, tournamentGameValues } from './registration.types';
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} é obrigatório`);
@@ -10,11 +10,8 @@ export const registrationInputSchema = z.object({
   className: requiredText('Turma'),
   schoolYear: requiredText('Ano escolar'),
   nickname: requiredText('Apelido ou nome de gamer'),
-  preferredGame: requiredText('Jogo preferido'),
-  platform: requiredText('Plataforma'),
-  responsibleContact: requiredText('Contato do responsável'),
-  consent: z.boolean().refine((value) => value, {
-    message: 'O consentimento é obrigatório',
+  preferredGame: z.enum(tournamentGameValues, {
+    errorMap: () => ({ message: 'Selecione um jogo válido' }),
   }),
 });
 

@@ -1,5 +1,5 @@
 import mongoose, { Schema, type InferSchemaType, type Model } from 'mongoose';
-import { registrationStatusValues } from '@/features/registrations/domain';
+import { registrationStatusValues, tournamentGameValues } from '@/features/registrations/domain';
 
 const registrationSchema = new Schema(
   {
@@ -8,16 +8,11 @@ const registrationSchema = new Schema(
     className: { type: String, required: true, trim: true, uppercase: true },
     schoolYear: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true },
-    preferredGame: { type: String, required: true, trim: true },
-    platform: { type: String, required: true, trim: true },
-    responsibleContact: { type: String, required: true, trim: true },
-    consent: {
-      type: Boolean,
+    preferredGame: {
+      type: String,
+      enum: tournamentGameValues,
       required: true,
-      validate: {
-        validator: (value: boolean) => value === true,
-        message: 'Consentimento obrigatório',
-      },
+      trim: true,
     },
     status: {
       type: String,
@@ -25,6 +20,7 @@ const registrationSchema = new Schema(
       default: 'pending',
       required: true,
     },
+    isSeedData: { type: Boolean, default: false, required: true },
   },
   {
     collection: 'registrations',

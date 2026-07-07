@@ -24,10 +24,7 @@ const defaultValues: RegistrationInput = {
   className: '',
   schoolYear: '',
   nickname: '',
-  preferredGame: '',
-  platform: '',
-  responsibleContact: '',
-  consent: false,
+  preferredGame: 'FC26',
 };
 
 export function useRegistrationForm() {

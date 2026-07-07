@@ -40,7 +40,7 @@
 
 ## Phase 6 - Draw and Bracket
 
-- [ ] Create draw domain rules.
-- [ ] Generate fair random pairings.
-- [ ] Persist draw results.
-- [ ] Display bracket to organizers.
+- [x] Create draw domain rules.
+- [x] Generate fair random pairings.
+- [x] Persist draw results.
+- [x] Display bracket to organizers.

@@ -46,13 +46,12 @@ Campos recomendados:
 - Turma
 - Ano escolar
 - Apelido ou nome de gamer
-- Jogo preferido ou plataforma
-- Contato do responsável
-- Consentimento para participar
+- Jogo escolhido
 
 ## Regras de negócio
 - Cada aluno pode se inscrever apenas uma vez.
 - O formulário deve impedir campos vazios obrigatórios.
 - As inscrições devem fechar automaticamente após duas semanas.
 - O sorteio deve considerar apenas participantes ativos e validados.
-- O sistema deve gerar um chaveamento aleatório e justo.
+- O sistema deve gerar um chaveamento mata-mata aleatório e justo, separado por jogo.
+- Cada inscrição deve escolher somente um dos jogos disponíveis: FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa ou Flaflu.

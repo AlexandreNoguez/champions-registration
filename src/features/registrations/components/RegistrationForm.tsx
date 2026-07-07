@@ -6,10 +6,8 @@ import {
   Alert,
   Box,
   Button,
-  Checkbox,
   Chip,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   InputLabel,
   MenuItem,
@@ -22,7 +20,10 @@ import {
 import type { FormEvent, ReactNode } from 'react';
 import { Controller } from 'react-hook-form';
 import type { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
-import type { RegistrationInput } from '@/features/registrations/domain';
+import {
+  tournamentGameValues,
+  type RegistrationInput,
+} from '@/features/registrations/domain';
 import { useRegistrationForm } from '@/features/registrations/hooks/useRegistrationForm';
 import { useRegistrationStatus } from '@/features/registrations/hooks/useRegistrationStatus';
 
@@ -36,16 +37,7 @@ const schoolYearOptions = [
   '3º ano do ensino médio',
 ];
 
-const platformOptions = [
-  'PlayStation',
-  'Xbox',
-  'Nintendo Switch',
-  'PC',
-  'Celular',
-  'Outra',
-];
-
-type FieldName = Exclude<keyof RegistrationInput, 'consent'>;
+type FieldName = Exclude<keyof RegistrationInput, 'schoolYear' | 'preferredGame'>;
 
 type RegistrationTextField = {
   name: FieldName;
@@ -76,16 +68,6 @@ const gameFields: RegistrationTextField[] = [
   {
     name: 'nickname',
     label: 'Apelido ou nome de gamer',
-  },
-  {
-    name: 'preferredGame',
-    label: 'Jogo preferido',
-  },
-  {
-    name: 'responsibleContact',
-    label: 'Contato do responsável',
-    helperText: 'Telefone, e-mail ou outro contato combinado com a escola.',
-    autoComplete: 'tel',
   },
 ];
 
@@ -164,8 +146,8 @@ export function RegistrationForm() {
         </FormSection>
 
         <FormSection
-          title="Preferências de jogo"
-          description="Essas informações ajudam a organizar partidas e comunicação."
+          title="Modalidade"
+          description="Escolha o jogo em que o aluno vai competir; o sorteio será separado por jogo."
         >
           <ResponsiveFieldGrid>
             {gameFields.map((field) => (
@@ -177,11 +159,9 @@ export function RegistrationForm() {
                 register={register}
               />
             ))}
-            <PlatformSelect control={control} errors={errors} isDisabled={isRegistrationBlocked} />
+            <PreferredGameSelect control={control} errors={errors} isDisabled={isRegistrationBlocked} />
           </ResponsiveFieldGrid>
         </FormSection>
-
-        <ConsentControl control={control} errors={errors} isDisabled={isRegistrationBlocked} />
 
         <Box>
           <Button
@@ -384,24 +364,24 @@ function SchoolYearSelect({ control, errors, isDisabled }: SelectControlProps) {
   );
 }
 
-function PlatformSelect({ control, errors, isDisabled }: SelectControlProps) {
+function PreferredGameSelect({ control, errors, isDisabled }: SelectControlProps) {
   return (
     <Controller
       control={control}
-      name="platform"
+      name="preferredGame"
       render={({ field }) => {
-        const errorMessage = errors.platform?.message;
+        const errorMessage = errors.preferredGame?.message;
 
         return (
           <FormControl fullWidth error={Boolean(errorMessage)}>
-            <InputLabel id="platform-label">Plataforma</InputLabel>
+            <InputLabel id="preferred-game-label">Jogo</InputLabel>
             <Select
               {...field}
               disabled={isDisabled}
-              label="Plataforma"
-              labelId="platform-label"
+              label="Jogo"
+              labelId="preferred-game-label"
             >
-              {platformOptions.map((option) => (
+              {tournamentGameValues.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -412,40 +392,5 @@ function PlatformSelect({ control, errors, isDisabled }: SelectControlProps) {
         );
       }}
     />
-  );
-}
-
-type ConsentControlProps = {
-  control: Control<RegistrationInput>;
-  errors: FieldErrors<RegistrationInput>;
-  isDisabled: boolean;
-};
-
-function ConsentControl({ control, errors, isDisabled }: ConsentControlProps) {
-  const errorMessage = errors.consent?.message;
-
-  return (
-    <FormControl error={Boolean(errorMessage)}>
-      <Controller
-        control={control}
-        name="consent"
-        render={({ field }) => (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={field.value}
-                disabled={isDisabled}
-                inputRef={field.ref}
-                name={field.name}
-                onBlur={field.onBlur}
-                onChange={(event) => field.onChange(event.target.checked)}
-              />
-            }
-            label="Confirmo que o aluno tem autorização para participar do torneio."
-          />
-        )}
-      />
-      <FormHelperText>{errorMessage || ' '}</FormHelperText>
-    </FormControl>
   );
 }

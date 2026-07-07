@@ -1,4 +1,14 @@
+export const tournamentGameValues = [
+  'FC26',
+  'STREET FIGHTER 6',
+  'Tartaruga ninja',
+  'Futmesa',
+  'Flaflu',
+] as const;
+
 export const registrationStatusValues = ['pending', 'approved', 'rejected'] as const;
+
+export type TournamentGame = (typeof tournamentGameValues)[number];
 
 export type RegistrationStatus = (typeof registrationStatusValues)[number];
 
@@ -9,11 +19,9 @@ export type Registration = {
   className: string;
   schoolYear: string;
   nickname: string;
-  preferredGame: string;
-  platform: string;
-  responsibleContact: string;
-  consent: boolean;
+  preferredGame: TournamentGame;
   status: RegistrationStatus;
+  isSeedData?: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

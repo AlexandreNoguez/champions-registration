@@ -78,9 +78,6 @@ export function normalizeRegistrationInput(input: RegistrationInput): Registrati
     className: input.className.trim().toUpperCase(),
     schoolYear: input.schoolYear.trim(),
     nickname: input.nickname.trim(),
-    preferredGame: input.preferredGame.trim(),
-    platform: input.platform.trim(),
-    responsibleContact: input.responsibleContact.trim(),
-    consent: input.consent,
+    preferredGame: input.preferredGame,
   };
 }

@@ -86,10 +86,8 @@ function serializeRegistration(registration: RegistrationDocument & { _id: unkno
     schoolYear: registration.schoolYear,
     nickname: registration.nickname,
     preferredGame: registration.preferredGame,
-    platform: registration.platform,
-    responsibleContact: registration.responsibleContact,
-    consent: registration.consent,
     status: registration.status,
+    isSeedData: registration.isSeedData,
     createdAt: registration.createdAt,
     updatedAt: registration.updatedAt,
   };

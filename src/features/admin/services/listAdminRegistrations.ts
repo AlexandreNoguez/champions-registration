@@ -3,6 +3,8 @@ import {
   registrationStatusSchema,
   registrationStatusValues,
   type RegistrationStatus,
+  tournamentGameValues,
+  type TournamentGame,
 } from '@/features/registrations/domain';
 import { RegistrationModel } from '@/models/Registration';
 
@@ -13,17 +15,16 @@ export type AdminRegistration = {
   className: string;
   schoolYear: string;
   nickname: string;
-  preferredGame: string;
-  platform: string;
-  responsibleContact: string;
-  consent: boolean;
+  preferredGame: TournamentGame;
   status: RegistrationStatus;
+  isSeedData: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
 export type AdminRegistrationFilters = {
   className?: string;
+  preferredGame?: TournamentGame;
   schoolYear?: string;
   status?: RegistrationStatus;
 };
@@ -32,6 +33,7 @@ export type AdminRegistrationListResponse = {
   filters: AdminRegistrationFilters;
   filterOptions: {
     classNames: string[];
+    games: TournamentGame[];
     schoolYears: string[];
     statuses: RegistrationStatus[];
   };
@@ -45,6 +47,7 @@ export type AdminRegistrationListResponse = {
 
 const adminRegistrationFilterSchema = z.object({
   className: z.string().trim().optional(),
+  preferredGame: z.enum(tournamentGameValues).optional(),
   schoolYear: z.string().trim().optional(),
   status: registrationStatusSchema.optional(),
 });
@@ -52,6 +55,7 @@ const adminRegistrationFilterSchema = z.object({
 export function parseAdminRegistrationFilters(searchParams: URLSearchParams): AdminRegistrationFilters {
   const parsedFilters = adminRegistrationFilterSchema.parse({
     className: normalizeOptionalSearchParam(searchParams.get('className'))?.toUpperCase(),
+    preferredGame: normalizeOptionalSearchParam(searchParams.get('preferredGame')),
     schoolYear: normalizeOptionalSearchParam(searchParams.get('schoolYear')),
     status: normalizeOptionalSearchParam(searchParams.get('status')),
   });
@@ -88,6 +92,7 @@ export async function listAdminRegistrations(
     filters,
     filterOptions: {
       classNames: sortTextValues(classNames),
+      games: [...tournamentGameValues],
       schoolYears: sortTextValues(schoolYears),
       statuses: [...registrationStatusValues],
     },
@@ -99,10 +104,8 @@ export async function listAdminRegistrations(
       schoolYear: registration.schoolYear,
       nickname: registration.nickname,
       preferredGame: registration.preferredGame,
-      platform: registration.platform,
-      responsibleContact: registration.responsibleContact,
-      consent: registration.consent,
       status: registration.status,
+      isSeedData: Boolean(registration.isSeedData),
       createdAt: registration.createdAt.toISOString(),
       updatedAt: registration.updatedAt.toISOString(),
     })),
@@ -123,6 +126,10 @@ function buildMongoFilter(filters: AdminRegistrationFilters) {
 
   if (filters.className) {
     mongoFilter.className = filters.className;
+  }
+
+  if (filters.preferredGame) {
+    mongoFilter.preferredGame = filters.preferredGame;
   }
 
   if (filters.schoolYear) {

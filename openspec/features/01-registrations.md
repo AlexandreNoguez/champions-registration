@@ -9,15 +9,15 @@ Permitir que um aluno preencha um formulário e tenha sua inscrição registrada
 - Turma
 - Ano escolar
 - Apelido ou nome de gamer
-- Jogo preferido ou plataforma
-- Contato do responsável
-- Consentimento de participação
+- Jogo escolhido
 
 ## Regras
 - Todos os campos obrigatórios devem ser preenchidos.
 - Não pode existir mais de uma inscrição para o mesmo aluno.
 - A inscrição deve ser armazenada com data e hora do envio.
 - O sistema deve rejeitar dados inválidos ou incompletos.
+- O jogo deve ser escolhido entre FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa e Flaflu.
+- Cada aluno participa apenas do jogo escolhido na inscrição.
 
 ## Cenários principais
 1. Cadastro bem-sucedido.

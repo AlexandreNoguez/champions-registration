@@ -20,3 +20,12 @@ O foco inicial é o fluxo completo de inscrição, encerramento e sorteio, sem f
 
 ## 7. Acesso administrativo inicial
 O painel administrativo inicial será protegido por `ADMIN_TOKEN`, enviado como Bearer token para endpoints em `/api/admin/*`. A interface `/admin` mantém o token somente no navegador para simplificar a operação sem criar um sistema de login completo nesta fase.
+
+## 8. Jogos oficiais do torneio
+As inscrições aceitam apenas os jogos FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa e Flaflu. Plataforma, contato do responsável e autorização foram removidos do formulário inicial.
+
+## 9. Chaveamento mata-mata
+O sorteio inicial será gerado em formato mata-mata, separado por jogo. O documento vigente do sorteio será persistido na coleção `draws` com uma seed para transparência e poderá ser reprocessado pela organização.
+
+## 10. Seeds de teste
+O painel administrativo pode gerar 50 inscrições de teste marcadas com `isSeedData`. A limpeza dessas seeds remove apenas inscrições com essa marcação, preservando inscrições reais.
