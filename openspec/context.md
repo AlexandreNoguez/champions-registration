@@ -49,7 +49,7 @@ Campos recomendados:
 - Número da chamada, quando disponível
 
 ## Regras de negócio
-- Cada aluno pode se inscrever apenas uma vez.
+- Cada aluno pode se inscrever uma vez por jogo.
 - O formulário deve impedir campos vazios obrigatórios.
 - As inscrições devem fechar automaticamente após duas semanas.
 - O sorteio deve considerar apenas participantes ativos e validados.

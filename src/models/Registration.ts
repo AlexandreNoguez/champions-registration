@@ -33,7 +33,8 @@ const registrationSchema = new Schema(
   }
 );
 
-registrationSchema.index({ className: 1, fullName: 1 });
+registrationSchema.index({ preferredGame: 1, className: 1, fullName: 1 });
+registrationSchema.index({ preferredGame: 1, className: 1, callNumber: 1 });
 
 export type RegistrationDocument = InferSchemaType<typeof registrationSchema>;
 

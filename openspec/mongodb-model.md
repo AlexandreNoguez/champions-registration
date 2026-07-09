@@ -22,8 +22,8 @@
 
 ### Regras de negócio para o modelo
 - `fullName` é obrigatório.
-- `callNumber`, quando informado, deve ser único por turma ou por evento.
-- Quando `callNumber` não for informado, a aplicação deve usar `className` e `fullName` para evitar duplicidade.
+- `callNumber`, quando informado, ajuda a identificar duplicidade por jogo e turma.
+- Quando `callNumber` não for informado, a aplicação deve usar `preferredGame`, `className` e `fullName` para evitar duplicidade no mesmo jogo.
 - `status` pode assumir valores como `pending`, `approved`, `rejected`.
 - `preferredGame` deve ser um dos jogos permitidos: FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa ou Flaflu.
 - Campos `partner*` são obrigatórios apenas quando `preferredGame` for Futmesa ou Flaflu.

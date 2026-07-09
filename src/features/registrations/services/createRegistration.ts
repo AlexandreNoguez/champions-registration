@@ -110,6 +110,7 @@ async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegi
     callNumber: input.callNumber,
     className: input.className,
     fullName: input.fullName,
+    preferredGame: input.preferredGame,
   });
 
   if (isTeamTournamentGame(input.preferredGame) && input.partnerClassName && input.partnerFullName) {
@@ -118,6 +119,7 @@ async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegi
         callNumber: input.partnerCallNumber,
         className: input.partnerClassName,
         fullName: input.partnerFullName,
+        preferredGame: input.preferredGame,
       })
     );
   }
@@ -135,6 +137,7 @@ type StudentIdentity = {
   callNumber?: string;
   className: string;
   fullName: string;
+  preferredGame: string;
 };
 
 function buildStudentIdentityFilters(identity: StudentIdentity): Array<Record<string, string>> {
@@ -143,10 +146,12 @@ function buildStudentIdentityFilters(identity: StudentIdentity): Array<Record<st
       {
         className: identity.className,
         callNumber: identity.callNumber,
+        preferredGame: identity.preferredGame,
       },
       {
         partnerClassName: identity.className,
         partnerCallNumber: identity.callNumber,
+        preferredGame: identity.preferredGame,
       },
     ];
   }
@@ -155,10 +160,12 @@ function buildStudentIdentityFilters(identity: StudentIdentity): Array<Record<st
     {
       className: identity.className,
       fullName: identity.fullName,
+      preferredGame: identity.preferredGame,
     },
     {
       partnerClassName: identity.className,
       partnerFullName: identity.fullName,
+      preferredGame: identity.preferredGame,
     },
   ];
 }

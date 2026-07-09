@@ -3,7 +3,7 @@
 ## Cadastro de inscrição
 - O sistema deve permitir que um aluno preencha um formulário com dados básicos.
 - O sistema deve validar todos os campos obrigatórios antes de salvar a inscrição.
-- O sistema deve impedir duplicidade de inscrição para o mesmo aluno.
+- O sistema deve impedir duplicidade de inscrição para o mesmo aluno no mesmo jogo.
 - O sistema deve registrar a data e a hora da inscrição.
 
 ## Consulta de inscrições
