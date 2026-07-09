@@ -14,7 +14,7 @@ export type DrawDocument = {
 const drawParticipantPartnerSchema = new Schema(
   {
     fullName: { type: String, required: true },
-    callNumber: { type: String, required: true },
+    callNumber: { type: String, required: false },
     className: { type: String, required: true },
     schoolYear: { type: String, required: true },
     nickname: { type: String, required: true },
@@ -26,7 +26,7 @@ const drawParticipantSchema = new Schema(
   {
     registrationId: { type: String, required: true },
     fullName: { type: String, required: true },
-    callNumber: { type: String, required: true },
+    callNumber: { type: String, required: false },
     className: { type: String, required: true },
     schoolYear: { type: String, required: true },
     nickname: { type: String, required: true },

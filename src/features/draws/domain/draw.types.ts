@@ -3,13 +3,13 @@ import type { TournamentGame } from '@/features/registrations/domain';
 export type DrawParticipant = {
   registrationId: string;
   fullName: string;
-  callNumber: string;
+  callNumber?: string;
   className: string;
   schoolYear: string;
   nickname: string;
   partner?: {
     fullName: string;
-    callNumber: string;
+    callNumber?: string;
     className: string;
     schoolYear: string;
     nickname: string;

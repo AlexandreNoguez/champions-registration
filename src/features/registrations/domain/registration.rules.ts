@@ -13,8 +13,14 @@ export type RegistrationPeriodStatus = {
   status: 'open' | 'not_started' | 'closed';
 };
 
-export function buildRegistrationIdentity(input: Pick<RegistrationInput, 'callNumber' | 'className'>) {
-  return `${input.className.trim().toLowerCase()}-${input.callNumber.trim()}`;
+export function buildRegistrationIdentity(input: Pick<RegistrationInput, 'callNumber' | 'className' | 'fullName'>) {
+  const callNumber = input.callNumber?.trim();
+
+  if (callNumber) {
+    return `${input.className.trim().toLowerCase()}-${callNumber}`;
+  }
+
+  return `${input.className.trim().toLowerCase()}-${input.fullName.trim().toLowerCase()}`;
 }
 
 export function areRegistrationsOpen(now: Date, opensAt?: Date, closesAt?: Date) {
@@ -75,7 +81,7 @@ export function resolveRegistrationsCloseAt(opensAt?: Date, closesAt?: Date) {
 export function normalizeRegistrationInput(input: RegistrationInput): RegistrationInput {
   const normalizedInput: RegistrationInput = {
     fullName: input.fullName.trim(),
-    callNumber: input.callNumber.trim(),
+    callNumber: normalizeOptionalText(input.callNumber),
     className: input.className.trim().toUpperCase(),
     schoolYear: input.schoolYear.trim(),
     nickname: input.nickname.trim(),
@@ -89,9 +95,14 @@ export function normalizeRegistrationInput(input: RegistrationInput): Registrati
   return {
     ...normalizedInput,
     partnerFullName: input.partnerFullName?.trim(),
-    partnerCallNumber: input.partnerCallNumber?.trim(),
+    partnerCallNumber: normalizeOptionalText(input.partnerCallNumber),
     partnerClassName: input.partnerClassName?.trim().toUpperCase(),
     partnerSchoolYear: input.partnerSchoolYear?.trim(),
     partnerNickname: input.partnerNickname?.trim(),
   };
+}
+
+function normalizeOptionalText(value?: string) {
+  const trimmedValue = value?.trim();
+  return trimmedValue ? trimmedValue : undefined;
 }

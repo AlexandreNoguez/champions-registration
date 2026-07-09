@@ -12,13 +12,21 @@ export function getParticipantDisplayName(participant: DrawParticipant) {
 }
 
 export function getParticipantDetails(participant: DrawParticipant) {
-  const primaryDetails = `${participant.nickname} - ${participant.className} - chamada ${participant.callNumber}`;
+  const primaryDetails = formatParticipantDetails(
+    participant.nickname,
+    participant.className,
+    participant.callNumber
+  );
 
   if (!participant.partner) {
     return primaryDetails;
   }
 
-  return `${primaryDetails} | ${participant.partner.nickname} - ${participant.partner.className} - chamada ${participant.partner.callNumber}`;
+  return `${primaryDetails} | ${formatParticipantDetails(
+    participant.partner.nickname,
+    participant.partner.className,
+    participant.partner.callNumber
+  )}`;
 }
 
 export function getParticipantTooltipTitle(participant: DrawParticipant) {
@@ -30,4 +38,14 @@ export function getParticipantTooltipTitle(participant: DrawParticipant) {
       <Typography variant="caption">{getParticipantDetails(participant)}</Typography>
     </Box>
   );
+}
+
+function formatParticipantDetails(nickname: string, className: string, callNumber?: string) {
+  return [
+    nickname,
+    className,
+    callNumber ? `chamada ${callNumber}` : '',
+  ]
+    .filter(Boolean)
+    .join(' - ');
 }

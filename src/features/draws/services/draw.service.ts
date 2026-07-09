@@ -100,7 +100,7 @@ async function getParticipantsByGame() {
     const participant: DrawParticipant = {
       registrationId: String(registration._id),
       fullName: registration.fullName,
-      callNumber: registration.callNumber,
+      callNumber: optionalString(registration.callNumber),
       className: registration.className,
       schoolYear: registration.schoolYear,
       nickname: registration.nickname,
@@ -109,14 +109,13 @@ async function getParticipantsByGame() {
     if (
       isTeamTournamentGame(game) &&
       registration.partnerFullName &&
-      registration.partnerCallNumber &&
       registration.partnerClassName &&
       registration.partnerSchoolYear &&
       registration.partnerNickname
     ) {
       participant.partner = {
         fullName: registration.partnerFullName,
-        callNumber: registration.partnerCallNumber,
+        callNumber: optionalString(registration.partnerCallNumber),
         className: registration.partnerClassName,
         schoolYear: registration.partnerSchoolYear,
         nickname: registration.partnerNickname,
@@ -131,6 +130,10 @@ async function getParticipantsByGame() {
 
 function toPlainGameDraw(gameDraw: GameDraw) {
   return JSON.parse(JSON.stringify(gameDraw)) as GameDraw;
+}
+
+function optionalString(value: string | null | undefined) {
+  return value || undefined;
 }
 
 function serializeDraw(draw: DrawDocument & { _id: unknown }): SerializedDraw {

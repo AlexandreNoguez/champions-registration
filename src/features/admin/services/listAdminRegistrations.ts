@@ -11,7 +11,7 @@ import { RegistrationModel } from '@/models/Registration';
 export type AdminRegistration = {
   id: string;
   fullName: string;
-  callNumber: string;
+  callNumber?: string;
   className: string;
   schoolYear: string;
   nickname: string;
@@ -104,7 +104,7 @@ export async function listAdminRegistrations(
     registrations: registrations.map((registration) => ({
       id: String(registration._id),
       fullName: registration.fullName,
-      callNumber: registration.callNumber,
+      callNumber: optionalString(registration.callNumber),
       className: registration.className,
       schoolYear: registration.schoolYear,
       nickname: registration.nickname,

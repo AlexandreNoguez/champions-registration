@@ -44,7 +44,7 @@ export function RegistrationsTable({ registrations }: RegistrationsTableProps) {
                   <TableCell>{registration.fullName}</TableCell>
                   <TableCell>{registration.className}</TableCell>
                   <TableCell>{registration.schoolYear}</TableCell>
-                  <TableCell>{registration.callNumber}</TableCell>
+                  <TableCell>{registration.callNumber || '-'}</TableCell>
                   <TableCell>{registration.nickname}</TableCell>
                   <TableCell>
                     {registration.partnerFullName ? (

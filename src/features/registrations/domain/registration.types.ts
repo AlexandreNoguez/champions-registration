@@ -19,7 +19,7 @@ export type RegistrationStatus = (typeof registrationStatusValues)[number];
 export type Registration = {
   id: string;
   fullName: string;
-  callNumber: string;
+  callNumber?: string;
   className: string;
   schoolYear: string;
   nickname: string;

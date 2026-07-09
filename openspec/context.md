@@ -42,11 +42,11 @@ Capturar inscrições de alunos do ensino fundamental para um torneio de videoga
 ## Informações básicas do formulário
 Campos recomendados:
 - Nome completo
-- Número da chamada
 - Turma
 - Ano escolar
 - Apelido ou nome de gamer
 - Jogo escolhido
+- Número da chamada, quando disponível
 
 ## Regras de negócio
 - Cada aluno pode se inscrever apenas uma vez.

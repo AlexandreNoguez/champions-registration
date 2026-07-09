@@ -12,7 +12,6 @@ const optionalText = z.string().trim().optional();
 
 const teamGamePartnerFields = [
   ['partnerFullName', 'Nome completo do parceiro'],
-  ['partnerCallNumber', 'Número da chamada do parceiro'],
   ['partnerClassName', 'Turma do parceiro'],
   ['partnerSchoolYear', 'Ano escolar do parceiro'],
   ['partnerNickname', 'Apelido do parceiro'],
@@ -20,7 +19,7 @@ const teamGamePartnerFields = [
 
 const registrationFieldsSchema = z.object({
   fullName: requiredText('Nome completo'),
-  callNumber: requiredText('Número da chamada'),
+  callNumber: optionalText,
   className: requiredText('Turma'),
   schoolYear: requiredText('Ano escolar'),
   nickname: requiredText('Apelido ou nome de gamer'),
@@ -49,10 +48,18 @@ export const registrationInputSchema = registrationFieldsSchema.superRefine((inp
     }
   });
 
-  const primaryIdentity = `${input.className.trim().toLowerCase()}-${input.callNumber.trim()}`;
+  const primaryIdentity = buildStudentIdentity(
+    input.fullName,
+    input.className,
+    input.callNumber
+  );
   const partnerIdentity =
-    input.partnerClassName && input.partnerCallNumber
-      ? `${input.partnerClassName.trim().toLowerCase()}-${input.partnerCallNumber.trim()}`
+    input.partnerFullName && input.partnerClassName
+      ? buildStudentIdentity(
+          input.partnerFullName,
+          input.partnerClassName,
+          input.partnerCallNumber
+        )
       : '';
 
   if (partnerIdentity && partnerIdentity === primaryIdentity) {
@@ -63,6 +70,14 @@ export const registrationInputSchema = registrationFieldsSchema.superRefine((inp
     });
   }
 });
+
+function buildStudentIdentity(fullName: string, className: string, callNumber?: string) {
+  if (callNumber?.trim()) {
+    return `${className.trim().toLowerCase()}-${callNumber.trim()}`;
+  }
+
+  return `${className.trim().toLowerCase()}-${fullName.trim().toLowerCase()}`;
+}
 
 export const registrationStatusSchema = z.enum(registrationStatusValues);
 

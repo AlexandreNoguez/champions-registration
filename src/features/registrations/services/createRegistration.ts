@@ -84,7 +84,7 @@ function serializeRegistration(registration: RegistrationDocument & { _id: unkno
   return {
     id: String(registration._id),
     fullName: registration.fullName,
-    callNumber: registration.callNumber,
+    callNumber: optionalString(registration.callNumber),
     className: registration.className,
     schoolYear: registration.schoolYear,
     nickname: registration.nickname,
@@ -106,15 +106,19 @@ function optionalString(value: string | null | undefined) {
 }
 
 async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegistrationInput>) {
-  const participantFilters = [
-    buildParticipantFilter(input.className, input.callNumber),
-    buildPartnerFilter(input.className, input.callNumber),
-  ];
+  const participantFilters: Array<Record<string, string>> = buildStudentIdentityFilters({
+    callNumber: input.callNumber,
+    className: input.className,
+    fullName: input.fullName,
+  });
 
-  if (isTeamTournamentGame(input.preferredGame) && input.partnerClassName && input.partnerCallNumber) {
+  if (isTeamTournamentGame(input.preferredGame) && input.partnerClassName && input.partnerFullName) {
     participantFilters.push(
-      buildParticipantFilter(input.partnerClassName, input.partnerCallNumber),
-      buildPartnerFilter(input.partnerClassName, input.partnerCallNumber)
+      ...buildStudentIdentityFilters({
+        callNumber: input.partnerCallNumber,
+        className: input.partnerClassName,
+        fullName: input.partnerFullName,
+      })
     );
   }
 
@@ -127,18 +131,36 @@ async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegi
   }
 }
 
-function buildParticipantFilter(className: string, callNumber: string) {
-  return {
-    className,
-    callNumber,
-  };
-}
+type StudentIdentity = {
+  callNumber?: string;
+  className: string;
+  fullName: string;
+};
 
-function buildPartnerFilter(className: string, callNumber: string) {
-  return {
-    partnerClassName: className,
-    partnerCallNumber: callNumber,
-  };
+function buildStudentIdentityFilters(identity: StudentIdentity): Array<Record<string, string>> {
+  if (identity.callNumber) {
+    return [
+      {
+        className: identity.className,
+        callNumber: identity.callNumber,
+      },
+      {
+        partnerClassName: identity.className,
+        partnerCallNumber: identity.callNumber,
+      },
+    ];
+  }
+
+  return [
+    {
+      className: identity.className,
+      fullName: identity.fullName,
+    },
+    {
+      partnerClassName: identity.className,
+      partnerFullName: identity.fullName,
+    },
+  ];
 }
 
 function isDuplicateKeyError(error: unknown): error is MongoDuplicateKeyError {

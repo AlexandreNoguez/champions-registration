@@ -4,7 +4,7 @@ import { registrationStatusValues, tournamentGameValues } from '@/features/regis
 const registrationSchema = new Schema(
   {
     fullName: { type: String, required: true, trim: true },
-    callNumber: { type: String, required: true, trim: true },
+    callNumber: { type: String, required: false, trim: true },
     className: { type: String, required: true, trim: true, uppercase: true },
     schoolYear: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true },
@@ -33,7 +33,7 @@ const registrationSchema = new Schema(
   }
 );
 
-registrationSchema.index({ className: 1, callNumber: 1 }, { unique: true });
+registrationSchema.index({ className: 1, fullName: 1 });
 
 export type RegistrationDocument = InferSchemaType<typeof registrationSchema>;
 

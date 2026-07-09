@@ -5,7 +5,7 @@
 ### Campos principais
 - `_id`: ObjectId
 - `fullName`: string
-- `callNumber`: string
+- `callNumber`: string, opcional
 - `className`: string
 - `schoolYear`: string
 - `nickname`: string
@@ -22,7 +22,8 @@
 
 ### Regras de negócio para o modelo
 - `fullName` é obrigatório.
-- `callNumber` deve ser único por turma ou por evento.
+- `callNumber`, quando informado, deve ser único por turma ou por evento.
+- Quando `callNumber` não for informado, a aplicação deve usar `className` e `fullName` para evitar duplicidade.
 - `status` pode assumir valores como `pending`, `approved`, `rejected`.
 - `preferredGame` deve ser um dos jogos permitidos: FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa ou Flaflu.
 - Campos `partner*` são obrigatórios apenas quando `preferredGame` for Futmesa ou Flaflu.

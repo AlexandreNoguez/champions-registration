@@ -30,8 +30,8 @@ export const identityFields: RegistrationTextField[] = [
   },
   {
     name: 'callNumber',
-    label: 'Número da chamada',
-    helperText: 'Use o mesmo número da lista oficial da turma.',
+    label: 'Número da chamada (opcional)',
+    helperText: 'Preencha se souber o número da lista oficial da turma.',
   },
   {
     name: 'className',
@@ -55,7 +55,7 @@ export const partnerFields: RegistrationTextField[] = [
   },
   {
     name: 'partnerCallNumber',
-    label: 'Número da chamada do parceiro',
+    label: 'Número da chamada do parceiro (opcional)',
   },
   {
     name: 'partnerClassName',
