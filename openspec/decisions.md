@@ -36,5 +36,5 @@ O chaveamento usa a menor potência de 2 que comporta os inscritos de cada jogo.
 ## 12. Abas do painel administrativo por domínio
 O painel administrativo separa a lista geral de inscritos e cada chaveamento de jogo em abas. A aba de inscritos concentra consulta e filtros, enquanto cada jogo exibe apenas o bracket correspondente.
 
-## 13. Flaflu em duplas
-Flaflu é a única modalidade inscrita em dupla. O formulário exige dados do parceiro somente quando esse jogo é selecionado, e o sorteio trata a dupla como um único participante no chaveamento.
+## 13. Modalidades em duplas
+Futmesa e Flaflu são modalidades inscritas em dupla. O formulário exige dados do parceiro somente quando um desses jogos é selecionado, e o sorteio trata a dupla como um único participante no chaveamento.

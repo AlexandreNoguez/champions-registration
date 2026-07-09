@@ -1,10 +1,10 @@
-import { tournamentGameValues } from '@/features/registrations/domain';
+import { isTeamTournamentGame, tournamentGameValues } from '@/features/registrations/domain';
 import { RegistrationModel } from '@/models/Registration';
 
 const seedClassName = 'SEED';
 const seedSchoolYear = 'Teste';
 const seedCount = 50;
-const flafluPartnerOffset = 25;
+const teamPartnerOffset = 25;
 const seedNames = [
   'Maria',
   'Pedro',
@@ -65,7 +65,7 @@ export async function createTestSeeds() {
     const preferredGame = tournamentGameValues[index % tournamentGameValues.length];
     const seedNumber = index + 1;
     const seedName = seedNames[index];
-    const partnerName = seedNames[(index + flafluPartnerOffset) % seedNames.length];
+    const partnerName = seedNames[(index + teamPartnerOffset) % seedNames.length];
     const partnerSeedNumber = seedNumber + seedCount;
 
     const registration = {
@@ -79,7 +79,7 @@ export async function createTestSeeds() {
       isSeedData: true,
     };
 
-    if (preferredGame !== 'Flaflu') {
+    if (!isTeamTournamentGame(preferredGame)) {
       return registration;
     }
 
@@ -97,7 +97,7 @@ export async function createTestSeeds() {
 
   return {
     created: registrations.length,
-    message: '50 seeds de teste foram criadas, com Flaflu em duplas.',
+    message: '50 seeds de teste foram criadas, com Futmesa e Flaflu em duplas.',
   };
 }
 

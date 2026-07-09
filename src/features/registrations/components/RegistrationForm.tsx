@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import type { FormEvent } from 'react';
+import { isTeamTournamentGame } from '@/features/registrations/domain';
 import { useRegistrationForm } from '@/features/registrations/hooks/useRegistrationForm';
 import { useRegistrationStatus } from '@/features/registrations/hooks/useRegistrationStatus';
 import { FormSection } from './FormSection';
@@ -32,7 +33,7 @@ export function RegistrationForm() {
     watch,
   } = form;
   const selectedGame = watch('preferredGame');
-  const isFlafluRegistration = selectedGame === 'Flaflu';
+  const isTeamGameRegistration = isTeamTournamentGame(selectedGame);
   const isRegistrationBlocked =
     registrationStatus.status === 'success' && !registrationStatus.data.isOpen;
 
@@ -123,10 +124,10 @@ export function RegistrationForm() {
           </ResponsiveFieldGrid>
         </FormSection>
 
-        {isFlafluRegistration ? (
+        {isTeamGameRegistration ? (
           <FormSection
             title="Dados da dupla"
-            description="Para Flaflu, informe o parceiro que vai competir junto nesta inscrição."
+            description={`Para ${selectedGame}, informe o parceiro que vai competir junto nesta inscrição.`}
           >
             <ResponsiveFieldGrid>
               {partnerFields.map((field) => (

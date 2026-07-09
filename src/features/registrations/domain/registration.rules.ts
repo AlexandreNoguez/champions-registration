@@ -1,4 +1,5 @@
 import type { RegistrationInput } from './registration.schema';
+import { isTeamTournamentGame } from './registration.types';
 
 const registrationPeriodDays = 14;
 const millisecondsPerDay = 24 * 60 * 60 * 1000;
@@ -81,7 +82,7 @@ export function normalizeRegistrationInput(input: RegistrationInput): Registrati
     preferredGame: input.preferredGame,
   };
 
-  if (input.preferredGame !== 'Flaflu') {
+  if (!isTeamTournamentGame(input.preferredGame)) {
     return normalizedInput;
   }
 

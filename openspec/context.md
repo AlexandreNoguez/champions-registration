@@ -55,3 +55,4 @@ Campos recomendados:
 - O sorteio deve considerar apenas participantes ativos e validados.
 - O sistema deve gerar um chaveamento mata-mata aleatório e justo, separado por jogo.
 - Cada inscrição deve escolher somente um dos jogos disponíveis: FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa ou Flaflu.
+- Futmesa e Flaflu devem ser disputados em dupla.

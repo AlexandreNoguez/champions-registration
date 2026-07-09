@@ -6,7 +6,11 @@ import {
   type GameDraw,
   type WinnerSlot,
 } from '@/features/draws/domain';
-import { tournamentGameValues, type TournamentGame } from '@/features/registrations/domain';
+import {
+  isTeamTournamentGame,
+  tournamentGameValues,
+  type TournamentGame,
+} from '@/features/registrations/domain';
 import { DrawModel, type DrawDocument } from '@/models/Draw';
 import { RegistrationModel } from '@/models/Registration';
 
@@ -103,7 +107,7 @@ async function getParticipantsByGame() {
     };
 
     if (
-      game === 'Flaflu' &&
+      isTeamTournamentGame(game) &&
       registration.partnerFullName &&
       registration.partnerCallNumber &&
       registration.partnerClassName &&

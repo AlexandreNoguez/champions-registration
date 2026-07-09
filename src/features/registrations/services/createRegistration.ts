@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 import {
   areRegistrationsOpen,
+  isTeamTournamentGame,
   normalizeRegistrationInput,
   registrationInputSchema,
   type Registration,
@@ -110,7 +111,7 @@ async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegi
     buildPartnerFilter(input.className, input.callNumber),
   ];
 
-  if (input.preferredGame === 'Flaflu' && input.partnerClassName && input.partnerCallNumber) {
+  if (isTeamTournamentGame(input.preferredGame) && input.partnerClassName && input.partnerCallNumber) {
     participantFilters.push(
       buildParticipantFilter(input.partnerClassName, input.partnerCallNumber),
       buildPartnerFilter(input.partnerClassName, input.partnerCallNumber)

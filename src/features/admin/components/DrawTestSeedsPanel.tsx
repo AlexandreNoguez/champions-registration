@@ -19,7 +19,7 @@ export function DrawTestSeedsPanel({ token }: DrawTestSeedsPanelProps) {
             Dados de teste
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            Crie 50 inscrições seed distribuídas entre os jogos, com Flaflu em duplas, para simular o chaveamento.
+            Crie 50 inscrições seed distribuídas entre os jogos, com Futmesa e Flaflu em duplas, para simular o chaveamento.
           </Typography>
         </Box>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>

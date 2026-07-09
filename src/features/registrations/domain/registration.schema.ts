@@ -1,12 +1,16 @@
 import { z } from 'zod';
-import { registrationStatusValues, tournamentGameValues } from './registration.types';
+import {
+  isTeamTournamentGame,
+  registrationStatusValues,
+  tournamentGameValues,
+} from './registration.types';
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} é obrigatório`);
 
 const optionalText = z.string().trim().optional();
 
-const flafluPartnerFields = [
+const teamGamePartnerFields = [
   ['partnerFullName', 'Nome completo do parceiro'],
   ['partnerCallNumber', 'Número da chamada do parceiro'],
   ['partnerClassName', 'Turma do parceiro'],
@@ -31,15 +35,15 @@ const registrationFieldsSchema = z.object({
 });
 
 export const registrationInputSchema = registrationFieldsSchema.superRefine((input, context) => {
-  if (input.preferredGame !== 'Flaflu') {
+  if (!isTeamTournamentGame(input.preferredGame)) {
     return;
   }
 
-  flafluPartnerFields.forEach(([fieldName, label]) => {
+  teamGamePartnerFields.forEach(([fieldName, label]) => {
     if (!input[fieldName]?.trim()) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `${label} é obrigatório para Flaflu`,
+        message: `${label} é obrigatório para ${input.preferredGame}`,
         path: [fieldName],
       });
     }

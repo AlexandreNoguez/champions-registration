@@ -10,6 +10,10 @@ export const registrationStatusValues = ['pending', 'approved', 'rejected'] as c
 
 export type TournamentGame = (typeof tournamentGameValues)[number];
 
+export const teamTournamentGameValues = ['Futmesa', 'Flaflu'] as const;
+
+export type TeamTournamentGame = (typeof teamTournamentGameValues)[number];
+
 export type RegistrationStatus = (typeof registrationStatusValues)[number];
 
 export type Registration = {
@@ -30,3 +34,7 @@ export type Registration = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export function isTeamTournamentGame(game: TournamentGame): game is TeamTournamentGame {
+  return (teamTournamentGameValues as readonly TournamentGame[]).includes(game);
+}
