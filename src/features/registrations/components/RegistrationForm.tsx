@@ -37,7 +37,7 @@ const schoolYearOptions = [
   '3º ano do ensino médio',
 ];
 
-type FieldName = Exclude<keyof RegistrationInput, 'schoolYear' | 'preferredGame'>;
+type FieldName = Exclude<keyof RegistrationInput, 'schoolYear' | 'preferredGame' | 'partnerSchoolYear'>;
 
 type RegistrationTextField = {
   name: FieldName;
@@ -71,6 +71,27 @@ const gameFields: RegistrationTextField[] = [
   },
 ];
 
+const partnerFields: RegistrationTextField[] = [
+  {
+    name: 'partnerFullName',
+    label: 'Nome completo do parceiro',
+    autoComplete: 'name',
+  },
+  {
+    name: 'partnerCallNumber',
+    label: 'Número da chamada do parceiro',
+  },
+  {
+    name: 'partnerClassName',
+    label: 'Turma do parceiro',
+    helperText: 'Exemplo: 7A',
+  },
+  {
+    name: 'partnerNickname',
+    label: 'Apelido do parceiro',
+  },
+];
+
 export function RegistrationForm() {
   const { form, submissionState, submitRegistration } = useRegistrationForm();
   const registrationStatus = useRegistrationStatus();
@@ -78,7 +99,10 @@ export function RegistrationForm() {
     control,
     formState: { errors, isSubmitting },
     register,
+    watch,
   } = form;
+  const selectedGame = watch('preferredGame');
+  const isFlafluRegistration = selectedGame === 'Flaflu';
   const isRegistrationBlocked =
     registrationStatus.status === 'success' && !registrationStatus.data.isOpen;
 
@@ -141,7 +165,13 @@ export function RegistrationForm() {
                 register={register}
               />
             ))}
-            <SchoolYearSelect control={control} errors={errors} isDisabled={isRegistrationBlocked} />
+            <SchoolYearSelect
+              control={control}
+              errors={errors}
+              isDisabled={isRegistrationBlocked}
+              label="Ano escolar"
+              name="schoolYear"
+            />
           </ResponsiveFieldGrid>
         </FormSection>
 
@@ -162,6 +192,32 @@ export function RegistrationForm() {
             <PreferredGameSelect control={control} errors={errors} isDisabled={isRegistrationBlocked} />
           </ResponsiveFieldGrid>
         </FormSection>
+
+        {isFlafluRegistration ? (
+          <FormSection
+            title="Dados da dupla"
+            description="Para Flaflu, informe o parceiro que vai competir junto nesta inscrição."
+          >
+            <ResponsiveFieldGrid>
+              {partnerFields.map((field) => (
+                <RegistrationTextInput
+                  key={field.name}
+                  field={field}
+                  errors={errors}
+                  isDisabled={isRegistrationBlocked}
+                  register={register}
+                />
+              ))}
+              <SchoolYearSelect
+                control={control}
+                errors={errors}
+                isDisabled={isRegistrationBlocked}
+                label="Ano escolar do parceiro"
+                name="partnerSchoolYear"
+              />
+            </ResponsiveFieldGrid>
+          </FormSection>
+        ) : null}
 
         <Box>
           <Button
@@ -333,22 +389,28 @@ type SelectControlProps = {
   isDisabled: boolean;
 };
 
-function SchoolYearSelect({ control, errors, isDisabled }: SelectControlProps) {
+type SchoolYearSelectProps = SelectControlProps & {
+  label: string;
+  name: 'schoolYear' | 'partnerSchoolYear';
+};
+
+function SchoolYearSelect({ control, errors, isDisabled, label, name }: SchoolYearSelectProps) {
   return (
     <Controller
       control={control}
-      name="schoolYear"
+      name={name}
       render={({ field }) => {
-        const errorMessage = errors.schoolYear?.message;
+        const errorMessage = errors[name]?.message;
+        const labelId = `${name}-label`;
 
         return (
           <FormControl fullWidth error={Boolean(errorMessage)}>
-            <InputLabel id="school-year-label">Ano escolar</InputLabel>
+            <InputLabel id={labelId}>{label}</InputLabel>
             <Select
               {...field}
               disabled={isDisabled}
-              label="Ano escolar"
-              labelId="school-year-label"
+              label={label}
+              labelId={labelId}
             >
               {schoolYearOptions.map((option) => (
                 <MenuItem key={option} value={option}>

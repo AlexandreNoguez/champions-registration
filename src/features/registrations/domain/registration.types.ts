@@ -20,6 +20,11 @@ export type Registration = {
   schoolYear: string;
   nickname: string;
   preferredGame: TournamentGame;
+  partnerFullName?: string;
+  partnerCallNumber?: string;
+  partnerClassName?: string;
+  partnerSchoolYear?: string;
+  partnerNickname?: string;
   status: RegistrationStatus;
   isSeedData?: boolean;
   createdAt: Date;

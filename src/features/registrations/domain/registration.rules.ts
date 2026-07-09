@@ -72,12 +72,25 @@ export function resolveRegistrationsCloseAt(opensAt?: Date, closesAt?: Date) {
 }
 
 export function normalizeRegistrationInput(input: RegistrationInput): RegistrationInput {
-  return {
+  const normalizedInput: RegistrationInput = {
     fullName: input.fullName.trim(),
     callNumber: input.callNumber.trim(),
     className: input.className.trim().toUpperCase(),
     schoolYear: input.schoolYear.trim(),
     nickname: input.nickname.trim(),
     preferredGame: input.preferredGame,
+  };
+
+  if (input.preferredGame !== 'Flaflu') {
+    return normalizedInput;
+  }
+
+  return {
+    ...normalizedInput,
+    partnerFullName: input.partnerFullName?.trim(),
+    partnerCallNumber: input.partnerCallNumber?.trim(),
+    partnerClassName: input.partnerClassName?.trim().toUpperCase(),
+    partnerSchoolYear: input.partnerSchoolYear?.trim(),
+    partnerNickname: input.partnerNickname?.trim(),
   };
 }

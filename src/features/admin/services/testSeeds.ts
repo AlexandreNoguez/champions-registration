@@ -4,6 +4,7 @@ import { RegistrationModel } from '@/models/Registration';
 const seedClassName = 'SEED';
 const seedSchoolYear = 'Teste';
 const seedCount = 50;
+const flafluPartnerOffset = 25;
 const seedNames = [
   'Maria',
   'Pedro',
@@ -64,8 +65,10 @@ export async function createTestSeeds() {
     const preferredGame = tournamentGameValues[index % tournamentGameValues.length];
     const seedNumber = index + 1;
     const seedName = seedNames[index];
+    const partnerName = seedNames[(index + flafluPartnerOffset) % seedNames.length];
+    const partnerSeedNumber = seedNumber + seedCount;
 
-    return {
+    const registration = {
       fullName: `${seedName} Seed`,
       callNumber: `S${seedNumber.toString().padStart(2, '0')}`,
       className: seedClassName,
@@ -75,13 +78,26 @@ export async function createTestSeeds() {
       status: 'pending',
       isSeedData: true,
     };
+
+    if (preferredGame !== 'Flaflu') {
+      return registration;
+    }
+
+    return {
+      ...registration,
+      partnerFullName: `${partnerName} Dupla Seed`,
+      partnerCallNumber: `S${partnerSeedNumber.toString().padStart(2, '0')}`,
+      partnerClassName: seedClassName,
+      partnerSchoolYear: seedSchoolYear,
+      partnerNickname: `${partnerName.toLowerCase()}-dupla`,
+    };
   });
 
   await RegistrationModel.insertMany(registrations, { ordered: true });
 
   return {
     created: registrations.length,
-    message: '50 seeds de teste foram criadas.',
+    message: '50 seeds de teste foram criadas, com Flaflu em duplas.',
   };
 }
 

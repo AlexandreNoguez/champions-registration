@@ -16,6 +16,11 @@ export type AdminRegistration = {
   schoolYear: string;
   nickname: string;
   preferredGame: TournamentGame;
+  partnerFullName?: string;
+  partnerCallNumber?: string;
+  partnerClassName?: string;
+  partnerSchoolYear?: string;
+  partnerNickname?: string;
   status: RegistrationStatus;
   isSeedData: boolean;
   createdAt: string;
@@ -104,6 +109,11 @@ export async function listAdminRegistrations(
       schoolYear: registration.schoolYear,
       nickname: registration.nickname,
       preferredGame: registration.preferredGame,
+      partnerFullName: optionalString(registration.partnerFullName),
+      partnerCallNumber: optionalString(registration.partnerCallNumber),
+      partnerClassName: optionalString(registration.partnerClassName),
+      partnerSchoolYear: optionalString(registration.partnerSchoolYear),
+      partnerNickname: optionalString(registration.partnerNickname),
       status: registration.status,
       isSeedData: Boolean(registration.isSeedData),
       createdAt: registration.createdAt.toISOString(),
@@ -119,6 +129,10 @@ export async function listAdminRegistrations(
       total,
     },
   };
+}
+
+function optionalString(value: string | null | undefined) {
+  return value || undefined;
 }
 
 function buildMongoFilter(filters: AdminRegistrationFilters) {

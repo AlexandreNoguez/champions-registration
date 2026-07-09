@@ -162,6 +162,10 @@ function buildMatchId(game: TournamentGame, round: number, position: number) {
 }
 
 function getParticipantLabel(participant: DrawParticipant) {
+  if (participant.partner) {
+    return `${participant.nickname} + ${participant.partner.nickname}`;
+  }
+
   return `${participant.nickname} (${participant.fullName})`;
 }
 

@@ -327,6 +327,7 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
               <TableCell>Ano</TableCell>
               <TableCell>Chamada</TableCell>
               <TableCell>Gamer</TableCell>
+              <TableCell>Dupla</TableCell>
               <TableCell>Jogo</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Inscrição</TableCell>
@@ -341,6 +342,18 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
                   <TableCell>{registration.schoolYear}</TableCell>
                   <TableCell>{registration.callNumber}</TableCell>
                   <TableCell>{registration.nickname}</TableCell>
+                  <TableCell>
+                    {registration.partnerFullName ? (
+                      <Box>
+                        <Typography variant="body2">{registration.partnerFullName}</Typography>
+                        <Typography color="text.secondary" variant="caption">
+                          {formatPartnerDetails(registration)}
+                        </Typography>
+                      </Box>
+                    ) : (
+                      '-'
+                    )}
+                  </TableCell>
                   <TableCell>{registration.preferredGame}</TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1}>
@@ -359,7 +372,7 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8}>
+                <TableCell colSpan={9}>
                   <Typography color="text.secondary" sx={{ py: 2 }} textAlign="center">
                     Nenhuma inscrição encontrada.
                   </Typography>
@@ -371,6 +384,16 @@ function RegistrationsTable({ registrations }: RegistrationsTableProps) {
       </TableContainer>
     </Paper>
   );
+}
+
+function formatPartnerDetails(registration: AdminRegistration) {
+  return [
+    registration.partnerNickname,
+    registration.partnerClassName,
+    registration.partnerCallNumber ? `chamada ${registration.partnerCallNumber}` : '',
+  ]
+    .filter(Boolean)
+    .join(' - ');
 }
 
 function formatDateTime(value: string) {

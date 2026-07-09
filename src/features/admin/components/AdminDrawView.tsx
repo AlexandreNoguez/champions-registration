@@ -13,6 +13,7 @@ import {
   Chip,
   Paper,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useResponsiveLayout } from '@/shared/hooks/useResponsiveLayout';
@@ -73,7 +74,7 @@ export function AdminDrawView({ selectedGame, token }: AdminDrawViewProps) {
                 Dados de teste
               </Typography>
               <Typography color="text.secondary" variant="body2">
-                Crie 50 inscrições seed distribuídas entre os jogos para simular o chaveamento.
+                Crie 50 inscrições seed distribuídas entre os jogos, com Flaflu em duplas, para simular o chaveamento.
               </Typography>
             </Box>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
@@ -193,14 +194,16 @@ function GameBracket({ gameDraw, onAdvanceWinner }: GameBracketProps) {
             {gameDraw.participantCount} inscritos
           </Typography>
         </Box>
-        <Chip
-          label={champion ? `Campeão: ${champion.fullName}` : 'Campeão a definir'}
-          sx={{
-            bgcolor: champion ? '#ffd966' : 'rgba(255, 255, 255, 0.12)',
-            color: champion ? '#32124d' : 'common.white',
-            fontWeight: 700,
-          }}
-        />
+        <Tooltip title={champion ? getParticipantTooltipTitle(champion) : ''}>
+          <Chip
+            label={champion ? `Campeão: ${getParticipantDisplayName(champion)}` : 'Campeão a definir'}
+            sx={{
+              bgcolor: champion ? '#ffd966' : 'rgba(255, 255, 255, 0.12)',
+              color: champion ? '#32124d' : 'common.white',
+              fontWeight: 700,
+            }}
+          />
+        </Tooltip>
       </Stack>
 
       {gameDraw.participantCount < 2 ? (
@@ -352,13 +355,15 @@ function FinalStage({ game, minWidth, match, onAdvanceWinner, totalRounds }: Fin
           width: 180,
         }}
       >
-        <Typography
-          noWrap
-          sx={{ color: '#ffd966', fontWeight: 800, maxWidth: '100%' }}
-          variant="subtitle2"
-        >
-          {match.winner ? match.winner.fullName : 'Vencedor'}
-        </Typography>
+        <Tooltip title={match.winner ? getParticipantTooltipTitle(match.winner) : ''}>
+          <Typography
+            noWrap
+            sx={{ color: '#ffd966', fontWeight: 800, maxWidth: '100%' }}
+            variant="subtitle2"
+          >
+            {match.winner ? getParticipantDisplayName(match.winner) : 'Vencedor'}
+          </Typography>
+        </Tooltip>
       </Box>
       <Box
         sx={{
@@ -404,7 +409,7 @@ function MatchCard({ game, match, onAdvanceWinner, side }: MatchCardProps) {
           ? '0 10px 22px rgba(255, 217, 102, 0.2)'
           : '0 12px 26px rgba(32, 7, 51, 0.2)',
         color: 'text.primary',
-        overflow: 'visible',
+        overflow: 'hidden',
         position: 'relative',
         '&::after': {
           borderTop: '2px solid rgba(255, 217, 102, 0.62)',
@@ -460,12 +465,9 @@ function MatchSlot({ isWinner, matchId, onAdvanceWinner, slot }: MatchSlotProps)
   const isPendingSlot = slot.label === 'A definir';
   const isBye = slot.label === 'BYE';
   const canAdvance = Boolean(slot.participant);
-  const primaryText = slot.participant?.fullName || slot.label;
-  const secondaryText = slot.participant
-    ? `${slot.participant.nickname} - ${slot.participant.className} - chamada ${slot.participant.callNumber}`
-    : '';
-
-  return (
+  const primaryText = slot.participant ? getParticipantDisplayName(slot.participant) : slot.label;
+  const secondaryText = slot.participant ? getParticipantDetails(slot.participant) : '';
+  const slotButton = (
     <ButtonBase
       aria-label={canAdvance ? `Avançar ${slot.label} no jogo ${matchId}` : slot.label}
       disabled={!canAdvance}
@@ -527,6 +529,47 @@ function MatchSlot({ isWinner, matchId, onAdvanceWinner, slot }: MatchSlotProps)
         ) : null}
       </Stack>
     </ButtonBase>
+  );
+
+  if (!slot.participant) {
+    return slotButton;
+  }
+
+  return (
+    <Tooltip title={getParticipantTooltipTitle(slot.participant)}>
+      {slotButton}
+    </Tooltip>
+  );
+}
+
+type DrawParticipant = NonNullable<DrawSlot['participant']>;
+
+function getParticipantDisplayName(participant: DrawParticipant) {
+  if (participant.partner) {
+    return `${participant.fullName} + ${participant.partner.fullName}`;
+  }
+
+  return participant.fullName;
+}
+
+function getParticipantDetails(participant: DrawParticipant) {
+  const primaryDetails = `${participant.nickname} - ${participant.className} - chamada ${participant.callNumber}`;
+
+  if (!participant.partner) {
+    return primaryDetails;
+  }
+
+  return `${primaryDetails} | ${participant.partner.nickname} - ${participant.partner.className} - chamada ${participant.partner.callNumber}`;
+}
+
+function getParticipantTooltipTitle(participant: DrawParticipant) {
+  return (
+    <Box>
+      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+        {getParticipantDisplayName(participant)}
+      </Typography>
+      <Typography variant="caption">{getParticipantDetails(participant)}</Typography>
+    </Box>
   );
 }
 

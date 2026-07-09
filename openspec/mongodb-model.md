@@ -10,6 +10,11 @@
 - `schoolYear`: string
 - `nickname`: string
 - `preferredGame`: string
+- `partnerFullName`: string, opcional
+- `partnerCallNumber`: string, opcional
+- `partnerClassName`: string, opcional
+- `partnerSchoolYear`: string, opcional
+- `partnerNickname`: string, opcional
 - `status`: string
 - `isSeedData`: boolean
 - `createdAt`: date
@@ -20,6 +25,7 @@
 - `callNumber` deve ser único por turma ou por evento.
 - `status` pode assumir valores como `pending`, `approved`, `rejected`.
 - `preferredGame` deve ser um dos jogos permitidos: FC26, STREET FIGHTER 6, Tartaruga ninja, Futmesa ou Flaflu.
+- Campos `partner*` são obrigatórios apenas quando `preferredGame` for Flaflu.
 - `isSeedData` identifica inscrições geradas para simulação e limpeza posterior.
 
 ### Exemplo de documento

@@ -4,7 +4,17 @@ import { registrationStatusValues, tournamentGameValues } from './registration.t
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} é obrigatório`);
 
-export const registrationInputSchema = z.object({
+const optionalText = z.string().trim().optional();
+
+const flafluPartnerFields = [
+  ['partnerFullName', 'Nome completo do parceiro'],
+  ['partnerCallNumber', 'Número da chamada do parceiro'],
+  ['partnerClassName', 'Turma do parceiro'],
+  ['partnerSchoolYear', 'Ano escolar do parceiro'],
+  ['partnerNickname', 'Apelido do parceiro'],
+] as const;
+
+const registrationFieldsSchema = z.object({
   fullName: requiredText('Nome completo'),
   callNumber: requiredText('Número da chamada'),
   className: requiredText('Turma'),
@@ -13,11 +23,46 @@ export const registrationInputSchema = z.object({
   preferredGame: z.enum(tournamentGameValues, {
     errorMap: () => ({ message: 'Selecione um jogo válido' }),
   }),
+  partnerFullName: optionalText,
+  partnerCallNumber: optionalText,
+  partnerClassName: optionalText,
+  partnerSchoolYear: optionalText,
+  partnerNickname: optionalText,
+});
+
+export const registrationInputSchema = registrationFieldsSchema.superRefine((input, context) => {
+  if (input.preferredGame !== 'Flaflu') {
+    return;
+  }
+
+  flafluPartnerFields.forEach(([fieldName, label]) => {
+    if (!input[fieldName]?.trim()) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${label} é obrigatório para Flaflu`,
+        path: [fieldName],
+      });
+    }
+  });
+
+  const primaryIdentity = `${input.className.trim().toLowerCase()}-${input.callNumber.trim()}`;
+  const partnerIdentity =
+    input.partnerClassName && input.partnerCallNumber
+      ? `${input.partnerClassName.trim().toLowerCase()}-${input.partnerCallNumber.trim()}`
+      : '';
+
+  if (partnerIdentity && partnerIdentity === primaryIdentity) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Informe um parceiro diferente do aluno principal',
+      path: ['partnerCallNumber'],
+    });
+  }
 });
 
 export const registrationStatusSchema = z.enum(registrationStatusValues);
 
-export const registrationSchema = registrationInputSchema.extend({
+export const registrationSchema = registrationFieldsSchema.extend({
   id: z.string(),
   status: registrationStatusSchema,
   createdAt: z.date(),

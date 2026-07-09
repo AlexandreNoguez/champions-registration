@@ -48,6 +48,8 @@ export async function createRegistration(payload: unknown): Promise<CreateRegist
   const normalizedInput = normalizeRegistrationInput(input);
 
   try {
+    await ensureRegistrationIsUnique(normalizedInput);
+
     const registration = await RegistrationModel.create({
       ...normalizedInput,
       status: 'pending',
@@ -86,10 +88,55 @@ function serializeRegistration(registration: RegistrationDocument & { _id: unkno
     schoolYear: registration.schoolYear,
     nickname: registration.nickname,
     preferredGame: registration.preferredGame,
+    partnerFullName: optionalString(registration.partnerFullName),
+    partnerCallNumber: optionalString(registration.partnerCallNumber),
+    partnerClassName: optionalString(registration.partnerClassName),
+    partnerSchoolYear: optionalString(registration.partnerSchoolYear),
+    partnerNickname: optionalString(registration.partnerNickname),
     status: registration.status,
     isSeedData: registration.isSeedData,
     createdAt: registration.createdAt,
     updatedAt: registration.updatedAt,
+  };
+}
+
+function optionalString(value: string | null | undefined) {
+  return value || undefined;
+}
+
+async function ensureRegistrationIsUnique(input: ReturnType<typeof normalizeRegistrationInput>) {
+  const participantFilters = [
+    buildParticipantFilter(input.className, input.callNumber),
+    buildPartnerFilter(input.className, input.callNumber),
+  ];
+
+  if (input.preferredGame === 'Flaflu' && input.partnerClassName && input.partnerCallNumber) {
+    participantFilters.push(
+      buildParticipantFilter(input.partnerClassName, input.partnerCallNumber),
+      buildPartnerFilter(input.partnerClassName, input.partnerCallNumber)
+    );
+  }
+
+  const existingRegistration = await RegistrationModel.exists({
+    $or: participantFilters,
+  }).exec();
+
+  if (existingRegistration) {
+    throw new DuplicateRegistrationError();
+  }
+}
+
+function buildParticipantFilter(className: string, callNumber: string) {
+  return {
+    className,
+    callNumber,
+  };
+}
+
+function buildPartnerFilter(className: string, callNumber: string) {
+  return {
+    partnerClassName: className,
+    partnerCallNumber: callNumber,
   };
 }
 

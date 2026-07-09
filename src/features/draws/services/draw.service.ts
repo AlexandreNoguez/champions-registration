@@ -93,14 +93,33 @@ async function getParticipantsByGame() {
   registrations.forEach((registration) => {
     const game = registration.preferredGame as TournamentGame;
 
-    participantsByGame[game].push({
+    const participant: DrawParticipant = {
       registrationId: String(registration._id),
       fullName: registration.fullName,
       callNumber: registration.callNumber,
       className: registration.className,
       schoolYear: registration.schoolYear,
       nickname: registration.nickname,
-    });
+    };
+
+    if (
+      game === 'Flaflu' &&
+      registration.partnerFullName &&
+      registration.partnerCallNumber &&
+      registration.partnerClassName &&
+      registration.partnerSchoolYear &&
+      registration.partnerNickname
+    ) {
+      participant.partner = {
+        fullName: registration.partnerFullName,
+        callNumber: registration.partnerCallNumber,
+        className: registration.partnerClassName,
+        schoolYear: registration.partnerSchoolYear,
+        nickname: registration.partnerNickname,
+      };
+    }
+
+    participantsByGame[game].push(participant);
   });
 
   return participantsByGame;

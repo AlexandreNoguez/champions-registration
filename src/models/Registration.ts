@@ -14,6 +14,11 @@ const registrationSchema = new Schema(
       required: true,
       trim: true,
     },
+    partnerFullName: { type: String, required: false, trim: true },
+    partnerCallNumber: { type: String, required: false, trim: true },
+    partnerClassName: { type: String, required: false, trim: true, uppercase: true },
+    partnerSchoolYear: { type: String, required: false, trim: true },
+    partnerNickname: { type: String, required: false, trim: true },
     status: {
       type: String,
       enum: registrationStatusValues,

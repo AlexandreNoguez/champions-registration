@@ -7,6 +7,13 @@ export type DrawParticipant = {
   className: string;
   schoolYear: string;
   nickname: string;
+  partner?: {
+    fullName: string;
+    callNumber: string;
+    className: string;
+    schoolYear: string;
+    nickname: string;
+  };
 };
 
 export type DrawSlot = {

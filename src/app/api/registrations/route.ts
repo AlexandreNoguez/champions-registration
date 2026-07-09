@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     if (error instanceof DuplicateRegistrationError) {
       return NextResponse.json(
-        { message: 'Este aluno já possui uma inscrição para esta turma.' },
+        { message: 'Um dos alunos informados já possui inscrição para esta turma.' },
         { status: 409 }
       );
     }
