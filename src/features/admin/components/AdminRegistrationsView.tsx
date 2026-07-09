@@ -8,50 +8,26 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { useResponsiveLayout } from '@/shared/hooks/useResponsiveLayout';
 import type {
-  AdminRegistration,
   AdminRegistrationFilters,
-  AdminRegistrationListResponse,
 } from '@/features/admin/services/listAdminRegistrations';
 import { useAdminRegistrations } from '@/features/admin/hooks/useAdminRegistrations';
 import { AdminDrawView } from '@/features/admin/components/AdminDrawView';
-import { tournamentGameValues, type RegistrationStatus, type TournamentGame } from '@/features/registrations/domain';
+import { AdminTabs, type AdminTabValue } from './AdminTabs';
+import { FilterSelect } from './FilterSelect';
+import { RegistrationsTable } from './RegistrationsTable';
+import { TotalsGrid } from './TotalsGrid';
+import { statusLabels } from './registrationStatusDisplay';
+import type { RegistrationStatus } from '@/features/registrations/domain';
 
-const statusLabels: Record<RegistrationStatus, string> = {
-  approved: 'Aprovada',
-  pending: 'Pendente',
-  rejected: 'Rejeitada',
-};
-
-const statusColors: Record<RegistrationStatus, 'default' | 'success' | 'warning' | 'error'> = {
-  approved: 'success',
-  pending: 'warning',
-  rejected: 'error',
-};
-
-type AdminTabValue = 'registrations' | TournamentGame;
-
+// Renderiza a tela administrativa de inscrições e chaveamentos.
 export function AdminRegistrationsView() {
   const layout = useResponsiveLayout();
   const [activeTab, setActiveTab] = useState<AdminTabValue>('registrations');
@@ -216,189 +192,4 @@ export function AdminRegistrationsView() {
       </Box>
     </Box>
   );
-}
-
-type AdminTabsProps = {
-  activeTab: AdminTabValue;
-  onChange: (event: SyntheticEvent, value: AdminTabValue) => void;
-};
-
-function AdminTabs({ activeTab, onChange }: AdminTabsProps) {
-  return (
-    <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-      <Tabs
-        allowScrollButtonsMobile
-        onChange={onChange}
-        scrollButtons="auto"
-        sx={{
-          minHeight: 56,
-          px: { xs: 1, sm: 2 },
-          '& .MuiTab-root': {
-            minHeight: 56,
-            textTransform: 'none',
-          },
-        }}
-        value={activeTab}
-        variant="scrollable"
-      >
-        <Tab label="Inscritos" value="registrations" />
-        {tournamentGameValues.map((game) => (
-          <Tab key={game} label={game} value={game} />
-        ))}
-      </Tabs>
-    </Paper>
-  );
-}
-
-type TotalsGridProps = {
-  data: AdminRegistrationListResponse;
-};
-
-function TotalsGrid({ data }: TotalsGridProps) {
-  const totals = [
-    { label: 'Total geral', value: data.totals.total },
-    { label: 'Resultado filtrado', value: data.totals.filtered },
-    { label: 'Pendentes', value: data.totals.byStatus.pending },
-    { label: 'Aprovadas', value: data.totals.byStatus.approved },
-    { label: 'Rejeitadas', value: data.totals.byStatus.rejected },
-  ];
-
-  return (
-    <Grid container spacing={2}>
-      {totals.map((total) => (
-        <Grid item xs={12} sm={6} md={2.4} key={total.label}>
-          <Paper elevation={1} sx={{ borderRadius: 2, p: 2.5, minHeight: 112 }}>
-            <Typography variant="body2" color="text.secondary">
-              {total.label}
-            </Typography>
-            <Typography variant="h4" component="p" sx={{ mt: 1 }}>
-              {total.value}
-            </Typography>
-          </Paper>
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
-
-type FilterSelectProps = {
-  getLabel?: (value: string) => string;
-  label: string;
-  name: keyof AdminRegistrationFilters;
-  onChange: (event: SelectChangeEvent) => void;
-  options: string[];
-  value: string;
-};
-
-function FilterSelect({ getLabel, label, name, onChange, options, value }: FilterSelectProps) {
-  return (
-    <FormControl fullWidth>
-      <InputLabel id={`${name}-filter-label`}>{label}</InputLabel>
-      <Select
-        label={label}
-        labelId={`${name}-filter-label`}
-        onChange={onChange}
-        value={value}
-      >
-        <MenuItem value="">Todos</MenuItem>
-        {options.map((option) => (
-          <MenuItem key={option} value={option}>
-            {getLabel ? getLabel(option) : option}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-}
-
-type RegistrationsTableProps = {
-  registrations: AdminRegistration[];
-};
-
-function RegistrationsTable({ registrations }: RegistrationsTableProps) {
-  return (
-    <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Aluno</TableCell>
-              <TableCell>Turma</TableCell>
-              <TableCell>Ano</TableCell>
-              <TableCell>Chamada</TableCell>
-              <TableCell>Gamer</TableCell>
-              <TableCell>Dupla</TableCell>
-              <TableCell>Jogo</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Inscrição</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {registrations.length ? (
-              registrations.map((registration) => (
-                <TableRow key={registration.id} hover>
-                  <TableCell>{registration.fullName}</TableCell>
-                  <TableCell>{registration.className}</TableCell>
-                  <TableCell>{registration.schoolYear}</TableCell>
-                  <TableCell>{registration.callNumber}</TableCell>
-                  <TableCell>{registration.nickname}</TableCell>
-                  <TableCell>
-                    {registration.partnerFullName ? (
-                      <Box>
-                        <Typography variant="body2">{registration.partnerFullName}</Typography>
-                        <Typography color="text.secondary" variant="caption">
-                          {formatPartnerDetails(registration)}
-                        </Typography>
-                      </Box>
-                    ) : (
-                      '-'
-                    )}
-                  </TableCell>
-                  <TableCell>{registration.preferredGame}</TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1}>
-                      <Chip
-                        color={statusColors[registration.status]}
-                        label={statusLabels[registration.status]}
-                        size="small"
-                      />
-                      {registration.isSeedData ? (
-                        <Chip color="info" label="Seed" size="small" />
-                      ) : null}
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{formatDateTime(registration.createdAt)}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={9}>
-                  <Typography color="text.secondary" sx={{ py: 2 }} textAlign="center">
-                    Nenhuma inscrição encontrada.
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
-  );
-}
-
-function formatPartnerDetails(registration: AdminRegistration) {
-  return [
-    registration.partnerNickname,
-    registration.partnerClassName,
-    registration.partnerCallNumber ? `chamada ${registration.partnerCallNumber}` : '',
-  ]
-    .filter(Boolean)
-    .join(' - ');
-}
-
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat('pt-BR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  }).format(new Date(value));
 }

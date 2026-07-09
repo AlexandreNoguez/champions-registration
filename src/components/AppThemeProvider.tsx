@@ -9,6 +9,7 @@ type AppThemeProviderProps = {
   children: ReactNode;
 };
 
+// Aplica o tema Material UI e o reset visual global da aplicação.
 export function AppThemeProvider({ children }: AppThemeProviderProps) {
   return (
     <ThemeProvider theme={theme}>

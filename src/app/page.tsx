@@ -1,6 +1,7 @@
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { RegistrationForm } from '@/features/registrations/components/RegistrationForm';
 
+// Renderiza a página pública de inscrição do torneio.
 export default function HomePage() {
   return (
     <Box

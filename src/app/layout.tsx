@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: 'Sistema de inscrições para torneio de videogames',
 };
 
+// Define a estrutura raiz da aplicação e aplica o tema global.
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
